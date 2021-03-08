@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Duetto</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <!-- Navigation -->
+    <string name="navigation_home">Home</string>
+    <string name="navigation_favourites">Favourites</string>
+
+    <string name="login">Login</string>
+    <string name="login_success">Log in successful.</string>
+    <string name="login_error">There was an error logging in.</string>
+</resources>
