@@ -8,10 +8,14 @@ apply plugin: 'kotlin-kapt'
 android {
     signingConfigs {
         debug {
-            storeFile file('/Users/federicopeyrani/keystores/deify.jks')
-            storePassword 'F6nxTR4bf-4cfD2WkwmYKvCc'
-            keyAlias 'Deify'
-            keyPassword 'F6nxTR4bf-4cfD2WkwmYKvCc'
+            def propsFile = rootProject.file('keystore.properties')
+            def props = new Properties()
+            props.load(new FileInputStream(propsFile))
+
+            storeFile file(props['debug.storeFile'])
+            storePassword props['debug.storePassword']
+            keyAlias props['debug.keyAlias']
+            keyPassword props['debug.keyPassword']
         }
     }
     compileSdkVersion 30
