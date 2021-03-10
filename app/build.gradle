@@ -14,13 +14,13 @@ android {
             keyPassword 'F6nxTR4bf-4cfD2WkwmYKvCc'
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "me.federicopeyrani.deify"
         minSdkVersion 22
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
