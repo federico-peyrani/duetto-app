@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.KEY_REFRESH_TOKEN
 import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.SHARED_PREFS_NAME
 import me.federicopeyrani.duetto.databinding.ActivityMainBinding
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     /** The view binding for this activity. */

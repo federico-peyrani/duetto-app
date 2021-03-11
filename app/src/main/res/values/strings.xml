@@ -9,4 +9,9 @@
     <string name="login">Login</string>
     <string name="login_success">Log in successful.</string>
     <string name="login_error">There was an error logging in.</string>
+
+    <!-- Card currently playing -->
+    <string name="lyrics">Lyrics</string>
+    <string name="overline">Currently playing:</string>
+    <string name="content_description">Album art</string>
 </resources>

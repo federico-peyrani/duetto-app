@@ -11,6 +11,7 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.AuthorizationResponse.Type
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +21,9 @@ import me.federicopeyrani.duetto.utils.Utils.randomString
 import me.federicopeyrani.duetto.utils.Utils.sha256
 import me.federicopeyrani.duetto.utils.Utils.toBase64Url
 import me.federicopeyrani.spotify_web_api.services.AuthService
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FirstLaunchActivity : AppCompatActivity() {
 
     companion object {
@@ -48,12 +51,16 @@ class FirstLaunchActivity : AppCompatActivity() {
     private lateinit var codeVerifier: String
     private lateinit var state: String
 
+    @Inject
+    lateinit var authService: AuthService
+
     private fun onLoginButtonClicked() {
         // generate random strings for the state and code verifier
         codeVerifier = randomString(CODE_VERIFIER_LENGTH)
         state = randomString(STATE_LENGTH)
         val codeChallenge = codeVerifier.sha256().toBase64Url()
 
+        // build the request
         val request = AuthorizationRequest.Builder(CLIENT_ID, Type.CODE, REDIRECT_URI).apply {
             // add additional parameters to the request
             setScopes(SCOPES)
@@ -66,7 +73,6 @@ class FirstLaunchActivity : AppCompatActivity() {
     }
 
     private fun onCode(response: AuthorizationResponse) = CoroutineScope(Dispatchers.IO).launch {
-        val authService = AuthService.build()
         val codeExchangeResponse = authService.getToken(
             clientId = CLIENT_ID,
             code = response.code,
@@ -75,6 +81,7 @@ class FirstLaunchActivity : AppCompatActivity() {
         )
 
         // save refresh token
+        Log.d("Login", "Saving token")
         prefs.edit {
             putString(KEY_REFRESH_TOKEN, codeExchangeResponse.refreshToken)
             putString(KEY_ACCESS_TOKEN, codeExchangeResponse.accessToken)
