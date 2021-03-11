@@ -11,19 +11,30 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.AuthorizationResponse.Type
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.federicopeyrani.duetto.databinding.ActivityFirstLaunchBinding
+import me.federicopeyrani.duetto.utils.Utils.randomString
+import me.federicopeyrani.duetto.utils.Utils.sha256
+import me.federicopeyrani.duetto.utils.Utils.toBase64Url
+import me.federicopeyrani.spotify_web_api.services.AuthService
 
 class FirstLaunchActivity : AppCompatActivity() {
 
     companion object {
-        private const val REQUEST_CODE = 1337
         private const val CLIENT_ID = "f11ce41c55004d0b95de68fa5d018a25"
         private const val REDIRECT_URI = "deify-login://callback"
 
-        private const val SHARED_PREFS_NAME = "login"
-        private const val TOKEN_KEY = "token"
+        private const val CODE_VERIFIER_LENGTH = 128
+        private const val STATE_LENGTH = 8
 
-        private val SCOPES = arrayOf("user-top-read")
+        private val SCOPES = arrayOf("user-top-read", "user-read-playback-state")
+
+        const val SHARED_PREFS_NAME = "login"
+        const val KEY_REFRESH_TOKEN = "refresh_token"
+        const val KEY_ACCESS_TOKEN = "access_token"
 
         const val AUTH_OUTCOME = "me.federicopeyrani.duetto.AUTH_OUTCOME"
         const val AUTH_OUTCOME_SUCCESS = 1
@@ -34,30 +45,54 @@ class FirstLaunchActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
 
-    private fun handleResponse(response: AuthorizationResponse) {
-        when (response.type) {
+    private lateinit var codeVerifier: String
+    private lateinit var state: String
 
-            Type.TOKEN -> {
-                // save token
-                prefs.edit { putString(TOKEN_KEY, response.accessToken) }
+    private fun onLoginButtonClicked() {
+        // generate random strings for the state and code verifier
+        codeVerifier = randomString(CODE_VERIFIER_LENGTH)
+        state = randomString(STATE_LENGTH)
+        val codeChallenge = codeVerifier.sha256().toBase64Url()
 
-                // return to main activity
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra(AUTH_OUTCOME, AUTH_OUTCOME_SUCCESS)
-                }
-                startActivity(intent)
-            }
+        val request = AuthorizationRequest.Builder(CLIENT_ID, Type.CODE, REDIRECT_URI).apply {
+            // add additional parameters to the request
+            setScopes(SCOPES)
+            setState(state)
+            setCustomParam("code_challenge_method", "S256")
+            setCustomParam("code_challenge", codeChallenge)
+        }.build()
 
-            Type.ERROR -> {
-                // display error message
-                val snackbar = Snackbar.make(binding.root,
-                                             response.error,
-                                             Snackbar.LENGTH_LONG)
-                snackbar.show()
-            }
+        AuthorizationClient.openLoginInBrowser(this, request)
+    }
 
-            else -> Log.d("AUTH", "Auth other")
+    private fun onCode(response: AuthorizationResponse) = CoroutineScope(Dispatchers.IO).launch {
+        val authService = AuthService.build()
+        val codeExchangeResponse = authService.getToken(
+            clientId = CLIENT_ID,
+            code = response.code,
+            redirectUri = REDIRECT_URI,
+            codeVerifier = codeVerifier
+        )
+
+        // save refresh token
+        prefs.edit {
+            putString(KEY_REFRESH_TOKEN, codeExchangeResponse.refreshToken)
+            putString(KEY_ACCESS_TOKEN, codeExchangeResponse.accessToken)
         }
+
+        withContext(Dispatchers.Main) {
+            // return to main activity
+            Intent(this@FirstLaunchActivity, MainActivity::class.java).apply {
+                putExtra(AUTH_OUTCOME, AUTH_OUTCOME_SUCCESS)
+                startActivity(this)
+            }
+        }
+    }
+
+    private fun onError(response: AuthorizationResponse) {
+        // display error message
+        val snackbar = Snackbar.make(binding.root, response.error, Snackbar.LENGTH_LONG)
+        snackbar.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,23 +106,18 @@ class FirstLaunchActivity : AppCompatActivity() {
         prefs = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE)
 
         // set ClickListener for login button
-        binding.loginButton.setOnClickListener {
-            val builder = AuthorizationRequest.Builder(CLIENT_ID, Type.TOKEN, REDIRECT_URI)
-            builder.setScopes(SCOPES)
-
-            // build the request and then start the login activity, which is part of the Spotify SDK
-            val request = builder.build()
-            AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
-        }
+        binding.loginButton.setOnClickListener { onLoginButtonClicked() }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
 
-        when (requestCode) {
-            REQUEST_CODE -> {
-                val response = AuthorizationClient.getResponse(resultCode, intent)
-                handleResponse(response)
+        intent?.data?.let {
+            val response = AuthorizationResponse.fromUri(it)
+            when (response.type) {
+                Type.CODE -> onCode(response)
+                Type.ERROR -> onError(response)
+                else -> Log.d("AUTH", "Auth other")
             }
         }
     }

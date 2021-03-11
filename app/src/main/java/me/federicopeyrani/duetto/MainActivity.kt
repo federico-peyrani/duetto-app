@@ -2,35 +2,25 @@ package me.federicopeyrani.duetto
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
+import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.KEY_REFRESH_TOKEN
+import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.SHARED_PREFS_NAME
 import me.federicopeyrani.duetto.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private const val SHARED_PREFS_NAME = "login"
-        private const val TOKEN_KEY = "token"
-    }
-
     /** The view binding for this activity. */
     private lateinit var binding: ActivityMainBinding
-
-    private fun onItem(item: MenuItem): Unit = when (item.itemId) {
-        // R.id.page_home -> Unit
-        // R.id.page_favourites -> Unit
-        else -> Unit
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // check if a token has already been obtained, otherwise start the login activity
         val prefs = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE)
-        if (!prefs.contains(TOKEN_KEY)) {
+        if (!prefs.contains(KEY_REFRESH_TOKEN)) {
             // launch login activity
             val intent = Intent(this, FirstLaunchActivity::class.java)
             startActivity(intent)
