@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CurrentPlaybackObject(
-    @SerialName("item") val item: TrackObject,
+    @SerialName("item") val item: TrackObject?,
     @SerialName("progress_ms") val progress: Int,
 )
