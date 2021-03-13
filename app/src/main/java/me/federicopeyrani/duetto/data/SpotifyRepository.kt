@@ -26,8 +26,13 @@ class SpotifyRepository @Inject constructor(
     fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
             try {
-                val currentPlaybackObject = webService.getCurrentPlayback()
-                emit(currentPlaybackObject)
+                val response = webService.getCurrentPlayback()
+                if (response.code() != 204) {
+                    val currentPlaybackObject = response.body()!!
+                    emit(currentPlaybackObject)
+                } else {
+                    emit(null)
+                }
             } catch (e: HttpException) {
                 Log.d("SpotifyRepository", "getCurrentPlayback() failed, retrying.")
             }
