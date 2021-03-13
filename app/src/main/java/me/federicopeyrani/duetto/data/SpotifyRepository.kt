@@ -23,7 +23,7 @@ class SpotifyRepository @Inject constructor(
         private const val CURRENT_PLAYBACK_POLLING_INTERVAL_MS = 5000L
     }
 
-    fun getCurrentPlayback(): Flow<CurrentPlaybackObject> = flow {
+    fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
             try {
                 val currentPlaybackObject = webService.getCurrentPlayback()

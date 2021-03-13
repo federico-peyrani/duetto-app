@@ -1,8 +1,13 @@
 package me.federicopeyrani.duetto.data
 
-import kotlinx.coroutines.flow.StateFlow
+import me.federicopeyrani.spotify_web_api.objects.TrackObject
+
+fun TrackObject.toTrack() = Track(
+    title = name,
+    artist = artists.joinToString(", ") { it.name },
+)
 
 class Track(
-    val title: StateFlow<String>,
-    val artist: StateFlow<String>,
+    val title: String,
+    val artist: String,
 )

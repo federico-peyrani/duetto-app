@@ -12,7 +12,4 @@ data class TrackObject(
     @SerialName("album") val album: AlbumObject,
     @SerialName("artists") val artists: Array<ArtistObject>,
     @SerialName("duration_ms") val duration: Int,
-) {
-
-    val artistsString get() = artists.joinToString(", ") { it.name }
-}
+)

@@ -6,7 +6,7 @@
 
         <variable
             name="track"
-            type="me.federicopeyrani.spotify_web_api.objects.TrackObject" />
+            type="me.federicopeyrani.duetto.data.Track" />
 
     </data>
 
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@{track.name}"
+                android:text="@{track.title}"
                 app:layout_constraintBottom_toTopOf="@+id/song_artist"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@{track.artistsString}"
+                android:text="@{track.artist}"
                 app:layout_constraintBottom_toBottomOf="@+id/album_art"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
