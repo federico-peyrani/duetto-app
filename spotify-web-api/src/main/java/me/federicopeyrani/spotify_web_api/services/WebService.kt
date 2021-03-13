@@ -1,7 +1,6 @@
 package me.federicopeyrani.spotify_web_api.services
 
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
-import retrofit2.Response
 import retrofit2.http.GET
 
 interface WebService {
@@ -12,5 +11,5 @@ interface WebService {
     }
 
     @GET("me/player")
-    suspend fun getCurrentPlayback(): Response<CurrentPlaybackObject>
+    suspend fun getCurrentPlayback(): CurrentPlaybackObject
 }
