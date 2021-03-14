@@ -20,10 +20,12 @@ class SpotifyRepository @Inject constructor(
 ) {
 
     companion object {
-        private const val CURRENT_PLAYBACK_POLLING_INTERVAL_MS = 5000L
+        private const val CURRENT_PLAYBACK_POLLING_INTERVAL_MS = 10000L
     }
 
-    fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
+    private val context = Dispatchers.IO
+
+    fun getCurrentPlayback(): Flow<CurrentPlaybackObject> = flow {
         while (true) {
             try {
                 val currentPlaybackObject = webService.getCurrentPlayback()
@@ -40,5 +42,5 @@ class SpotifyRepository @Inject constructor(
             // delay next polling by CURRENT_PLAYBACK_POLLING_INTERVAL_MS
             delay(CURRENT_PLAYBACK_POLLING_INTERVAL_MS)
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(context)
 }

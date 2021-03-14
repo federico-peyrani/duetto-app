@@ -30,6 +30,7 @@
 
             <ImageView
                 android:id="@+id/album_art"
+                albumArtUrls="@{track.albumArtUrls}"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginStart="16dp"
