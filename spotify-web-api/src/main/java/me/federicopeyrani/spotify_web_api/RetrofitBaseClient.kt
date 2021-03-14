@@ -3,6 +3,7 @@ package me.federicopeyrani.spotify_web_api
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import me.federicopeyrani.spotify_web_api.services.ServiceCompanionInterface
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -13,6 +14,7 @@ class RetrofitBaseClient<T>(
     private val serviceCompanion: ServiceCompanionInterface<T>,
     loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
     customInterceptor: Interceptor? = null,
+    customAuthenticator: Authenticator? = null,
 ) {
 
     companion object {
@@ -26,6 +28,7 @@ class RetrofitBaseClient<T>(
     private val okHttpClient = OkHttpClient.Builder().apply {
         addInterceptor(loggingInterceptor)
         customInterceptor?.let { addInterceptor(it) }
+        customAuthenticator?.let { authenticator(it) }
     }.build()
 
     private val contentType = CONTENT_TYPE_APPLICATION_JSON.toMediaType()
