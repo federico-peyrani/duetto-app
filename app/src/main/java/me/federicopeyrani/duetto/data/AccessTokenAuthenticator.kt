@@ -51,7 +51,7 @@ class AccessTokenAuthenticator @Inject constructor(
 
         // refresh token
         Log.d("AccessTokenAuth", "Refreshing token")
-        val refreshToken = accessTokenRepository.accessToken!!
+        val refreshToken = accessTokenRepository.refreshToken!!
         val codeExchangeResponse = runBlocking(context) {
             authService.refreshToken(
                 refreshToken = refreshToken,
