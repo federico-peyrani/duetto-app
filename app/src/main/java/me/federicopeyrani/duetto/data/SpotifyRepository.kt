@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
-import me.federicopeyrani.spotify_web_api.services.LyricsService
 import me.federicopeyrani.spotify_web_api.services.WebService
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -16,7 +15,6 @@ import javax.inject.Singleton
 @Singleton
 class SpotifyRepository @Inject constructor(
     private val webService: WebService,
-    private val lyricsService: LyricsService,
 ) {
 
     companion object {
