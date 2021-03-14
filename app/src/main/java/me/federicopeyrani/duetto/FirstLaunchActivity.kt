@@ -1,11 +1,9 @@
 package me.federicopeyrani.duetto
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import com.google.android.material.snackbar.Snackbar
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -16,6 +14,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.federicopeyrani.duetto.consts.ClientParams.CLIENT_ID
+import me.federicopeyrani.duetto.consts.ClientParams.REDIRECT_URI
+import me.federicopeyrani.duetto.consts.ClientParams.SCOPES
+import me.federicopeyrani.duetto.data.AccessTokenRepository
 import me.federicopeyrani.duetto.databinding.ActivityFirstLaunchBinding
 import me.federicopeyrani.duetto.utils.Utils.randomString
 import me.federicopeyrani.duetto.utils.Utils.sha256
@@ -27,17 +29,8 @@ import javax.inject.Inject
 class FirstLaunchActivity : AppCompatActivity() {
 
     companion object {
-        private const val CLIENT_ID = "f11ce41c55004d0b95de68fa5d018a25"
-        private const val REDIRECT_URI = "deify-login://callback"
-
         private const val CODE_VERIFIER_LENGTH = 128
         private const val STATE_LENGTH = 8
-
-        private val SCOPES = arrayOf("user-top-read", "user-read-playback-state")
-
-        const val SHARED_PREFS_NAME = "login"
-        const val KEY_REFRESH_TOKEN = "refresh_token"
-        const val KEY_ACCESS_TOKEN = "access_token"
 
         const val AUTH_OUTCOME = "me.federicopeyrani.duetto.AUTH_OUTCOME"
         const val AUTH_OUTCOME_SUCCESS = 1
@@ -46,13 +39,14 @@ class FirstLaunchActivity : AppCompatActivity() {
     /** The view binding for this activity. */
     private lateinit var binding: ActivityFirstLaunchBinding
 
-    private lateinit var prefs: SharedPreferences
-
     private lateinit var codeVerifier: String
     private lateinit var state: String
 
     @Inject
     lateinit var authService: AuthService
+
+    @Inject
+    lateinit var accessTokenRepository: AccessTokenRepository
 
     private fun onLoginButtonClicked() {
         // generate random strings for the state and code verifier
@@ -82,10 +76,10 @@ class FirstLaunchActivity : AppCompatActivity() {
 
         // save refresh token
         Log.d("Login", "Saving token")
-        prefs.edit {
-            putString(KEY_REFRESH_TOKEN, codeExchangeResponse.refreshToken)
-            putString(KEY_ACCESS_TOKEN, codeExchangeResponse.accessToken)
-        }
+        accessTokenRepository.putToken(
+            accessToken = codeExchangeResponse.accessToken,
+            refreshToken = codeExchangeResponse.refreshToken
+        )
 
         withContext(Dispatchers.Main) {
             // return to main activity
@@ -108,9 +102,6 @@ class FirstLaunchActivity : AppCompatActivity() {
         binding = ActivityFirstLaunchBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        // get SharedPreferences instance
-        prefs = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE)
 
         // set ClickListener for login button
         binding.loginButton.setOnClickListener { onLoginButtonClicked() }

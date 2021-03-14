@@ -7,9 +7,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.KEY_REFRESH_TOKEN
-import me.federicopeyrani.duetto.FirstLaunchActivity.Companion.SHARED_PREFS_NAME
+import me.federicopeyrani.duetto.data.AccessTokenRepository
 import me.federicopeyrani.duetto.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -17,15 +17,18 @@ class MainActivity : AppCompatActivity() {
     /** The view binding for this activity. */
     private lateinit var binding: ActivityMainBinding
 
+    @Inject
+    lateinit var accessTokenRepository: AccessTokenRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // check if a token has already been obtained, otherwise start the login activity
-        val prefs = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE)
-        if (!prefs.contains(KEY_REFRESH_TOKEN)) {
+        if (accessTokenRepository.refreshToken == null) {
             // launch login activity
             val intent = Intent(this, FirstLaunchActivity::class.java)
             startActivity(intent)
+            return
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
