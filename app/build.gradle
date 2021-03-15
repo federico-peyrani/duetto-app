@@ -55,13 +55,6 @@ android {
     }
 }
 
-repositories {
-    mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
-}
-
 kapt {
     correctErrorTypes true
 }
@@ -88,7 +81,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
     // Spotify sdk
-    implementation 'com.spotify.android:auth:1.2.3'
+    //implementation 'com.spotify.android:auth:1.2.3'
+    implementation files('libs/spotify-auth-release-1.2.3.aar')
     implementation "com.google.code.gson:gson:2.8.6"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.1"
