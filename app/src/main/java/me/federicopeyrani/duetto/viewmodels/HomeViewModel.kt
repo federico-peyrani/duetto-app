@@ -16,6 +16,7 @@ import me.federicopeyrani.duetto.data.Track
 import me.federicopeyrani.duetto.data.toTrack
 import me.federicopeyrani.spotify_web_api.objects.ImageObject
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
+import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +26,7 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private val SHARING_STARTED = SharingStarted.WhileSubscribed()
+        private const val TOP_N_GENRES = 6
 
         @JvmStatic
         @BindingAdapter("albumArtUrls")
@@ -43,4 +45,10 @@ class HomeViewModel @Inject constructor(
         .mapNotNull { it.item }
         .map(TrackObject::toTrack)
         .stateIn(viewModelScope, SHARING_STARTED, null)
+
+    suspend fun getTopGenres() = spotifyRepository.getTopGenres(TimeRange.MEDIUM_TERM)
+        .toList()
+        .sortedByDescending(Pair<String, Int>::second)
+        .take(TOP_N_GENRES)
+        .toMap()
 }

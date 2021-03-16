@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
 import me.federicopeyrani.spotify_web_api.services.WebService
+import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtists
+import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,4 +43,16 @@ class SpotifyRepository @Inject constructor(
             delay(CURRENT_PLAYBACK_POLLING_INTERVAL_MS)
         }
     }.flowOn(context)
+
+    suspend fun getTopTracks(timeRange: TimeRange) = webService.getTopTracks(timeRange)
+
+    suspend fun getTopArtists(timeRange: TimeRange) = webService.getTopArtists(timeRange)
+
+    suspend fun getTopGenres(timeRange: TimeRange): Map<String, Int> {
+        val topArtistsByTracks = getTopTracks(timeRange).items.flatMap { it.artists }
+        return webService.getArtists(topArtistsByTracks)
+            .flatMap { it.genres?.toList() ?: emptyList() }
+            .groupingBy { it }
+            .eachCount()
+    }
 }

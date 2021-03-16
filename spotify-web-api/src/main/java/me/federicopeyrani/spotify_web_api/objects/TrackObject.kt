@@ -10,6 +10,6 @@ data class TrackObject(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
     @SerialName("album") val album: AlbumObject,
-    @SerialName("artists") val artists: Array<ArtistObject>,
+    @SerialName("artists") val artists: List<ArtistObject>,
     @SerialName("duration_ms") val duration: Int,
 )
