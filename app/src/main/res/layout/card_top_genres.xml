@@ -5,10 +5,11 @@
     <data>
 
         <import type="java.util.List" />
+        <import type="me.federicopeyrani.duetto.views.StackedBarsGraphView.Bar" />
 
         <variable
-            name="values"
-            type="List&lt;Float>" />
+            name="bars"
+            type="List&lt;Bar>" />
 
     </data>
 
@@ -25,7 +26,7 @@
             <me.federicopeyrani.duetto.views.StackedBarsGraphView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                app:values="@{values}" />
+                app:bars="@{bars}" />
 
             <TextView
                 android:id="@+id/genres"

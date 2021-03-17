@@ -12,48 +12,28 @@ import kotlin.random.Random
 class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
     View(context, attributeSet) {
 
-    private class PaintList(
-        preallocateSize: Int,
-        private val builder: Paint.() -> Unit
+    class Bar(
+        var value: Float,
+        var color: Int = Random.nextInt(),
     ) {
 
-        private val mutableList = mutableListOf<Paint>()
-
-        init {
-            repeat(preallocateSize) {
-                val newPaint = Paint()
-                newPaint.builder()
-                mutableList.add(newPaint)
-            }
-        }
-
-        operator fun get(index: Int): Paint = if (index > mutableList.size - 1) {
-            val newPaint = Paint()
-            newPaint.builder()
-            mutableList.add(newPaint)
-            newPaint
-        } else {
-            mutableList[index]
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            flags = Paint.ANTI_ALIAS_FLAG
+            style = Paint.Style.FILL
+            color = this@Bar.color
         }
     }
 
     companion object {
-        private const val PREALLOCATE_PAINT_SIZE = 8
         private const val DEFAULT_NUM_BARS = 6
-        private const val SETTLE_ANIMATION_DURATION = 800L
-    }
-
-    private val paints = PaintList(PREALLOCATE_PAINT_SIZE) {
-        flags = Paint.ANTI_ALIAS_FLAG
-        style = Paint.Style.FILL
-        color = Random.nextInt()
+        private const val SETTLE_ANIMATION_DURATION = 400L
     }
 
     /**
      * The actual list of values used to draw the bars, the values get update at each call
-     * of [settleAnimationListener]
+     * of [ValueAnimator.addUpdateListener].
      */
-    private val _values: MutableList<Float> = generateSequence { 1f }
+    private val _bars = generateSequence { Bar(1f) }
         .take(DEFAULT_NUM_BARS)
         .toList()
         .normalize()
@@ -63,46 +43,40 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
      * The values used to draw the bars of the graph, if a non-null value is set, then a settling
      * animation to display the bars adjusting to the actual new values.
      */
-    var values: List<Float>? = null
+    var bars: List<Bar>? = null
         set(value) {
             // normalize the values once they are set, to save on computation time during onDraw()
             field = value?.normalize()?.apply {
                 // if the size of the new values exceeds the number of bars currently in the graph,
                 // initialize those bars to 0, so that they will expand to match the actual new
                 // value.
-                repeat(size - _values.size) { _values.add(0f) }
-                startSettleAnimation()
+                takeLast(size - _bars.size).forEach { _bars.add(Bar(0f, it.color)) }
+                val endValues = map { it.value }
+                startSettleAnimation(endValues)
             }
         }
 
-    var colors: List<Int>? = null
-        set(value) {
-            field = value
-            value?.forEachIndexed { index, i -> paints[index].color = i }
-        }
-
-    private fun Iterable<Float>.normalize(): List<Float> {
-        val sum = sum()
-        return map { it / sum }
+    private fun List<Bar>.normalize(): List<Bar> = apply {
+        val sum = map { it.value }.sum()
+        forEach { it.value /= sum }
     }
 
-    private fun settleAnimationListener(animatedFraction: Float) {
-        values?.forEachIndexed { index, endValue ->
-            _values[index] = _values[index] * (1 - animatedFraction) + endValue * animatedFraction
-        }
-        invalidate()
-    }
+    private fun ValueAnimator.interpolate(startValue: Float, endValue: Float) =
+        startValue * (1 - animatedFraction) + endValue * animatedFraction
 
-    private fun startSettleAnimation() = ValueAnimator.ofFloat(0f, 100f).apply {
+    private fun startSettleAnimation(endValues: List<Float>) = ValueAnimator.ofFloat(0f, 1f).apply {
         duration = SETTLE_ANIMATION_DURATION
         interpolator = DecelerateInterpolator()
-        addUpdateListener { settleAnimationListener(animatedFraction) }
-        start()
-    }
 
-    private fun Canvas.addBar(index: Int, position: Float, size: Float): Float {
-        drawRect(position, 0f, position + size, measuredHeight.toFloat(), paints[index])
-        return position + size
+        val startValues = _bars.map { it.value }
+        addUpdateListener {
+            _bars.forEachIndexed { index, bar ->
+                bar.value = interpolate(startValues[index], endValues[index])
+            }
+            invalidate()
+        }
+
+        start()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -110,7 +84,10 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
 
         if (canvas == null) return
 
-        _values.map { it * measuredWidth }
-            .foldIndexed(0f) { index, position, size -> canvas.addBar(index, position, size) }
+        _bars.fold(0f) { position, bar ->
+            val width = bar.value * measuredWidth
+            canvas.drawRect(position, 0f, position + width, measuredHeight.toFloat(), bar.paint)
+            position + width
+        }
     }
 }

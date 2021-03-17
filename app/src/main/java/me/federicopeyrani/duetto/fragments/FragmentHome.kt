@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.databinding.FragmentHomeBinding
 import me.federicopeyrani.duetto.viewmodels.HomeViewModel
+import me.federicopeyrani.duetto.views.StackedBarsGraphView
 
 @AndroidEntryPoint
 class FragmentHome : Fragment(R.layout.fragment_home) {
@@ -28,7 +29,7 @@ class FragmentHome : Fragment(R.layout.fragment_home) {
 
         lifecycleScope.launchWhenCreated {
             val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
-            binding.topGenresCard.values = genres.values.map { it.toFloat() }
+            binding.topGenresCard.bars = genres.map { StackedBarsGraphView.Bar(it.value.toFloat()) }
             binding.topGenresCard.genres.text = genres.keys.joinToString(", ")
         }
     }
