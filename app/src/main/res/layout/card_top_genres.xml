@@ -24,15 +24,10 @@
             android:layout_margin="16dp">
 
             <me.federicopeyrani.duetto.views.StackedBarsGraphView
+                android:id="@+id/graph"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                app:bars="@{bars}" />
-
-            <TextView
-                android:id="@+id/genres"
-                android:layout_marginTop="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="72dp"
+                app:textAppearance="?attr/textAppearanceBody1" />
 
         </LinearLayout>
 

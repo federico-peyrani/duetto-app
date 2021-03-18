@@ -29,8 +29,9 @@ class FragmentHome : Fragment(R.layout.fragment_home) {
 
         lifecycleScope.launchWhenCreated {
             val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
-            binding.topGenresCard.bars = genres.map { StackedBarsGraphView.Bar(it.value.toFloat()) }
-            binding.topGenresCard.genres.text = genres.keys.joinToString(", ")
+            binding.topGenresCard.graph.bars = genres.map {
+                StackedBarsGraphView.Bar(it.key, it.value.toFloat())
+            }
         }
     }
 }
