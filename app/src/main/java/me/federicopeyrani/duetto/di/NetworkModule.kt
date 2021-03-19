@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
 
     @Provides
     @Singleton
@@ -28,9 +28,11 @@ class NetworkModule {
         accessTokenInterceptor: AccessTokenInterceptor,
         accessTokenAuthenticator: AccessTokenAuthenticator,
     ): WebService {
-        val retrofit = RetrofitBaseClient(serviceCompanion = WebService,
-                                          customInterceptor = accessTokenInterceptor,
-                                          customAuthenticator = accessTokenAuthenticator)
+        val retrofit = RetrofitBaseClient(
+            serviceCompanion = WebService,
+            customInterceptor = accessTokenInterceptor,
+            customAuthenticator = accessTokenAuthenticator
+        )
         return retrofit.create()
     }
 }
