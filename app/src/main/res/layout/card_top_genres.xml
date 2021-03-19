@@ -2,20 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <import type="java.util.List" />
-        <import type="me.federicopeyrani.duetto.views.StackedBarsGraphView.Bar" />
-
-        <variable
-            name="bars"
-            type="List&lt;Bar>" />
-
-    </data>
-
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:shapeAppearance="@style/ShapeAppearance.Duetto.MediumComponent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,11 +13,21 @@
             android:orientation="vertical"
             android:layout_margin="16dp">
 
+            <TextView
+                android:id="@+id/overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/card_top_genres_overline"
+                android:textAppearance="?attr/textAppearanceOverline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <me.federicopeyrani.duetto.views.StackedBarsGraphView
+                style="@style/ShapeAppearance.Duetto.MediumComponent"
                 android:id="@+id/graph"
                 android:layout_width="match_parent"
-                android:layout_height="72dp"
-                app:textAppearance="?attr/textAppearanceBody1" />
+                android:layout_height="72dp" />
 
         </LinearLayout>
 

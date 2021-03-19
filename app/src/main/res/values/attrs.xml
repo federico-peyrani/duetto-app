@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="StackedBarsGraphView">
-        <attr name="textAppearance" format="reference" />
+        <attr name="graphCornerRadius" format="dimension" />
+        <attr name="labelTextAppearance" format="reference" />
+        <attr name="labelCircleSize" format="dimension" />
     </declare-styleable>
 </resources>

@@ -13,4 +13,7 @@
     <!-- Card currently playing -->
     <string name="overline">Currently playing</string>
     <string name="content_description">Album art</string>
+
+    <!-- Card top genres -->
+    <string name="card_top_genres_overline">Top genres</string>
 </resources>

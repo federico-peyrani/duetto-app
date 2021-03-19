@@ -2,16 +2,19 @@ package me.federicopeyrani.duetto.views
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import com.google.android.material.resources.TextAppearance
+import androidx.core.graphics.withSave
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.utils.AnimatedProperty
 import me.federicopeyrani.duetto.utils.takeLastIf
@@ -50,7 +53,7 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
 
         val rect = RectF()
 
-        var width = 0f
+        var barWidth = 0f
             private set
 
         /**
@@ -58,8 +61,8 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
          * drawn before this one, indicated by the parameter [position].
          */
         fun draw(canvas: Canvas, position: Float) {
-            width = value * measuredWidth
-            rect.set(position, 0f, position + width, barHeight)
+            barWidth = value * width
+            rect.set(position, 0f, position + barWidth, barHeight)
             canvas.drawRect(rect, paint)
         }
     }
@@ -69,9 +72,13 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
     companion object {
         private const val DEFAULT_BARS_NUM = 6
 
-        private const val DEFAULT_BARS_COLOR = Color.WHITE
+        private const val DEFAULT_BARS_COLOR = Color.BLACK
 
         private const val DEFAULT_BARS_ALPHA = 56
+
+        private const val DEFAULT_CORNER_RADIUS = 24f
+
+        private const val DEFAULT_CIRCLE_RADIUS = 24f
 
         private const val SETTLE_ANIMATION_DURATION = 400L
 
@@ -83,6 +90,10 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
         /** Extra spacing after each label (not counting [LABEL_CIRCLE_SPACING]). */
         private const val LABEL_TEXT_SPACING = 20f
     }
+
+    private val barClipPath = Path()
+
+    private val barClipRect = RectF()
 
     // region Animator support
 
@@ -132,23 +143,66 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
 
     // region Styling
 
-    @SuppressLint("RestrictedApi")
-    val textAppearance = TextAppearance(context, R.style.TextAppearance_MaterialComponents_Body1)
+    private val cornerRadius: Float
 
-    private val labelTextPain = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = textAppearance.textColor?.defaultColor ?: Color.BLACK
-        textSize = textAppearance.textSize
-    }
+    private val circleRadius: Float
 
-    private val circleRadius = labelTextPain.textSize / 2
-
-    private val circleY get() = measuredHeight - circleRadius
+    private val circleY get() = height - circleRadius
 
     private val textY get() = circleY - (labelTextPain.descent() + labelTextPain.ascent()) / 2
 
     private val barHeight get() = circleY - circleRadius - LABEL_CIRCLE_SPACING
 
+    private val labelTextPain: Paint
+
+    private val textAllCaps: Boolean
+
     // endregion
+
+    init {
+        val theme = context.theme
+
+        context.obtainStyledAttributes(attributeSet, R.styleable.StackedBarsGraphView).apply {
+            // get corner radius dimension or use default DEFAULT_CORNER_RADIUS value
+            cornerRadius = getDimension(
+                R.styleable.StackedBarsGraphView_graphCornerRadius,
+                DEFAULT_CORNER_RADIUS)
+
+            circleRadius = getDimension(
+                R.styleable.StackedBarsGraphView_labelCircleSize,
+                DEFAULT_CIRCLE_RADIUS)
+
+            val ap = getResourceId(R.styleable.StackedBarsGraphView_labelTextAppearance, -1)
+            val appearance = if (ap != -1) {
+                theme.obtainStyledAttributes(ap, R.styleable.TextAppearance)
+            } else {
+                val value = TypedValue()
+                theme.resolveAttribute(R.attr.textAppearanceSubtitle2, value, false)
+                theme.obtainStyledAttributes(value.data, R.styleable.TextAppearance)
+            }
+
+            appearance.apply {
+                labelTextPain = getTextPaint()
+
+                // extra text attributes
+                textAllCaps = getBoolean(R.styleable.TextAppearance_textAllCaps, false)
+
+                recycle()
+            }
+
+            recycle()
+        }
+    }
+
+    private fun TypedArray.getTextPaint() = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = getDimension(R.styleable.TextAppearance_android_textSize, 0f)
+
+        val fontFamily = getString(R.styleable.TextAppearance_fontFamily)
+        val fontStyle = getInt(R.styleable.TextAppearance_android_textStyle, Typeface.NORMAL)
+        typeface = Typeface.create(fontFamily, fontStyle)
+
+        color = getColor(R.styleable.TextAppearance_android_textColor, Color.BLACK)
+    }
 
     /**
      * Called every time a non-null list of bars is set to the the parameter [bars].
@@ -179,14 +233,27 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
         animator.start()
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
 
+        barClipRect.set(0f, 0f, w.toFloat(), barHeight)
+        barClipPath.apply {
+            reset()
+            addRoundRect(barClipRect, cornerRadius, cornerRadius, Path.Direction.CW)
+            close()
+        }
+    }
+
+    override fun onDraw(canvas: Canvas?) {
         if (canvas == null) return
 
-        drawBars.fold(0f) { position, drawBar ->
-            drawBar.draw(canvas, position)
-            position + drawBar.width
+        canvas.withSave {
+            canvas.clipPath(barClipPath)
+
+            drawBars.fold(0f) { position, drawBar ->
+                drawBar.draw(canvas, position)
+                position + drawBar.barWidth
+            }
         }
 
         bars?.zip(drawBars)?.fold(LABEL_INITIAL_SPACING) { position, (bar, drawBar) ->
@@ -196,9 +263,10 @@ class StackedBarsGraphView(context: Context, attributeSet: AttributeSet) :
             canvas.drawCircle(cursor, circleY, circleRadius, drawBar.paint)
 
             cursor += circleRadius + LABEL_CIRCLE_SPACING
-            canvas.drawText(bar.label, cursor, textY, labelTextPain)
+            val text = if (textAllCaps) bar.label.toUpperCase() else bar.label
+            canvas.drawText(text, cursor, textY, labelTextPain)
 
-            cursor += labelTextPain.measureText(bar.label) + LABEL_TEXT_SPACING
+            cursor += labelTextPain.measureText(text) + LABEL_TEXT_SPACING
             cursor
         }
     }
