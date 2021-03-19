@@ -28,10 +28,20 @@
 
     <style name="Theme.Deify.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ShapeAppearance.Duetto.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/cornerRadius</item>
+        <item name="graphCornerRadius">@dimen/cornerRadius</item>
+        <item name="labelCircleSize">4dp</item>
+        <item name="labelTextAppearance">@style/TextAppearance.Duetto.Overline</item>
+    </style>
+
     <!-- Typography theming -->
     <style name="TextAppearance.Duetto.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1" />
 
     <style name="TextAppearance.Duetto.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2" />
 
-    <style name="TextAppearance.Duetto.Overline" parent="TextAppearance.MaterialComponents.Overline" />
+    <style name="TextAppearance.Duetto.Overline" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="textAllCaps">true</item>
+    </style>
 </resources>
