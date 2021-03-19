@@ -21,7 +21,6 @@ android {
     }
 
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "me.federicopeyrani.duetto"
@@ -81,7 +80,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
     // Spotify sdk
-    //implementation 'com.spotify.android:auth:1.2.3'
     implementation files('libs/spotify-auth-release-1.2.3.aar')
     implementation "com.google.code.gson:gson:2.8.6"
 
