@@ -11,9 +11,8 @@ import retrofit2.http.Query
 
 interface WebService {
 
-    companion object : ServiceCompanionInterface<WebService> {
-        override val baseUrl = "https://api.spotify.com/v1/"
-        override val clazz = WebService::class.java
+    companion object {
+        const val BASE_URL = "https://api.spotify.com/v1/"
 
         // region Additional methods
 

@@ -6,9 +6,8 @@ import retrofit2.http.POST
 
 interface AuthService {
 
-    companion object : ServiceCompanionInterface<AuthService> {
-        override val baseUrl = "https://accounts.spotify.com/"
-        override val clazz = AuthService::class.java
+    companion object {
+        const val BASE_URL = "https://accounts.spotify.com/"
     }
 
     @POST("api/token")

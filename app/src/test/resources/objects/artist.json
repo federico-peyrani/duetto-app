@@ -1,0 +1,39 @@
+{
+  "external_urls": {
+    "spotify": "https://open.spotify.com/artist/5mlbvTfWUOfDrUIK6dkNzv"
+  },
+  "followers": {
+    "href": null,
+    "total": 812618
+  },
+  "genres": [
+    "dance pop",
+    "electropop",
+    "escape room",
+    "modern rock",
+    "pop"
+  ],
+  "href": "https://api.spotify.com/v1/artists/5mlbvTfWUOfDrUIK6dkNzv",
+  "id": "5mlbvTfWUOfDrUIK6dkNzv",
+  "images": [
+    {
+      "height": 640,
+      "url": "https://i.scdn.co/image/fa1f9099c9edb1a500ad50b2fc408ab956a2fc94",
+      "width": 640
+    },
+    {
+      "height": 320,
+      "url": "https://i.scdn.co/image/a2f68b002a1bf7e5137652099e5b521d6991e74f",
+      "width": 320
+    },
+    {
+      "height": 160,
+      "url": "https://i.scdn.co/image/9493c8eb0a3199f3a44ca5dad49b09df2c04a024",
+      "width": 160
+    }
+  ],
+  "name": "Poppy",
+  "popularity": 67,
+  "type": "artist",
+  "uri": "spotify:artist:5mlbvTfWUOfDrUIK6dkNzv"
+}

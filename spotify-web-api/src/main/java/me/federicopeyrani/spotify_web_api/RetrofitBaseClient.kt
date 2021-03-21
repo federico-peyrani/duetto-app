@@ -2,34 +2,20 @@ package me.federicopeyrani.spotify_web_api
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
-import me.federicopeyrani.spotify_web_api.services.ServiceCompanionInterface
-import okhttp3.Authenticator
-import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
-class RetrofitBaseClient<T>(
-    private val serviceCompanion: ServiceCompanionInterface<T>,
-    loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE,
-    customInterceptor: Interceptor? = null,
-    customAuthenticator: Authenticator? = null,
+inline fun <reified T> RetrofitBaseClient.create() = create(T::class.java)
+
+class RetrofitBaseClient(
+    private val baseUrl: String,
+    private val client: OkHttpClient,
 ) {
 
     companion object {
         const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
     }
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = loggingLevel
-    }
-
-    private val okHttpClient = OkHttpClient.Builder().apply {
-        addInterceptor(loggingInterceptor)
-        customInterceptor?.let { addInterceptor(it) }
-        customAuthenticator?.let { authenticator(it) }
-    }.build()
 
     private val contentType = CONTENT_TYPE_APPLICATION_JSON.toMediaType()
 
@@ -38,10 +24,10 @@ class RetrofitBaseClient<T>(
     }
 
     private val retrofit = Retrofit.Builder().apply {
-        baseUrl(serviceCompanion.baseUrl)
-        client(okHttpClient)
+        baseUrl(baseUrl)
+        client(client)
         addConverterFactory(json.asConverterFactory(contentType))
     }.build()
 
-    fun create(): T = retrofit.create(serviceCompanion.clazz)
+    fun <T> create(clazz: Class<T>): T = retrofit.create(clazz)
 }
