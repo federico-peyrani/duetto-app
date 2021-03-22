@@ -1,5 +1,7 @@
 package me.federicopeyrani.duetto.data
 
+import io.kotest.assertions.throwables.shouldThrowExactly
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import me.federicopeyrani.duetto.util.enqueueEmptyResponse
 import me.federicopeyrani.duetto.util.enqueueResponse
@@ -9,8 +11,6 @@ import me.federicopeyrani.spotify_web_api.services.WebService
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class SpotifyRepositoryTest {
@@ -30,13 +30,13 @@ class SpotifyRepositoryTest {
     fun `given current playback is not null, returns current playback`() {
         mockWebServer.enqueueResponse("current-playback.json")
         val currentPlayback = runBlocking { webService.getCurrentPlayback() }
-        assertEquals("GLAM!", currentPlayback.item.name)
+        currentPlayback.item.name shouldBe "GLAM!"
     }
 
     @Test
     fun `given current playback is null, throws KotlinNullPointerException`() {
         mockWebServer.enqueueEmptyResponse()
-        assertThrows(KotlinNullPointerException::class.java) {
+        shouldThrowExactly<KotlinNullPointerException> {
             runBlocking { webService.getCurrentPlayback() }
         }
     }
@@ -48,7 +48,7 @@ class SpotifyRepositoryTest {
 
         val recordedRequest = mockWebServer.takeRequest()
         val timeRangeQueryParam = recordedRequest.requestUrl!!.queryParameter("time_range")
-        assertEquals("medium_term", timeRangeQueryParam)
+        timeRangeQueryParam shouldBe "medium_term"
     }
 
     @After
