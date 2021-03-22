@@ -10,8 +10,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="16dp">
+            android:layout_margin="16dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/overline"
@@ -24,8 +24,8 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <me.federicopeyrani.duetto.views.StackedBarsGraphView
-                style="@style/ShapeAppearance.Duetto.MediumComponent"
                 android:id="@+id/graph"
+                style="@style/ShapeAppearance.Duetto.MediumComponent"
                 android:layout_width="match_parent"
                 android:layout_height="72dp" />
 

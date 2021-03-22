@@ -24,19 +24,19 @@
                 layout="@layout/card_currently_playing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
                 bind:track="@{viewModel.trackObject}" />
 
             <include
                 android:id="@+id/top_genres_card"
                 layout="@layout/card_top_genres"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp" />
 
         </LinearLayout>
 
