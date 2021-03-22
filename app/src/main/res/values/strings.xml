@@ -16,4 +16,7 @@
 
     <!-- Card top genres -->
     <string name="card_top_genres_overline">Top genres</string>
+
+    <!-- Card top tracks -->
+    <string name="card_top_tracks_overline">Top tracks</string>
 </resources>

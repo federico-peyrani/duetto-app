@@ -44,7 +44,8 @@ class SpotifyRepository @Inject constructor(
         }
     }.flowOn(context)
 
-    suspend fun getTopTracks(timeRange: TimeRange) = webService.getTopTracks(timeRange)
+    suspend fun getTopTracks(timeRange: TimeRange, limit: Int = 20) =
+        webService.getTopTracks(timeRange, limit = limit)
 
     suspend fun getTopArtists(timeRange: TimeRange) = webService.getTopArtists(timeRange)
 

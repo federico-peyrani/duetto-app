@@ -7,8 +7,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.federicopeyrani.duetto.R
+import me.federicopeyrani.duetto.adapters.TrackAdapter
 import me.federicopeyrani.duetto.databinding.FragmentHomeBinding
 import me.federicopeyrani.duetto.viewmodels.HomeViewModel
 import me.federicopeyrani.duetto.views.StackedBarsGraphView
@@ -20,6 +22,18 @@ class FragmentHome : Fragment(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModels()
 
+    private suspend fun setTopGenres() {
+        val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
+        binding.topGenresCard.graph.bars = genres.map {
+            StackedBarsGraphView.Bar(it.key, it.value.toFloat())
+        }
+    }
+
+    private suspend fun setTopTracks(adapter: TrackAdapter) {
+        val tracks = withContext(Dispatchers.IO) { viewModel.getTopTracks() }
+        adapter += tracks
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,11 +41,12 @@ class FragmentHome : Fragment(R.layout.fragment_home) {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+        val adapter = TrackAdapter()
+        binding.topTracksCard.rank.adapter = adapter
+
         lifecycleScope.launchWhenCreated {
-            val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
-            binding.topGenresCard.graph.bars = genres.map {
-                StackedBarsGraphView.Bar(it.key, it.value.toFloat())
-            }
+            launch { setTopGenres() }
+            launch { setTopTracks(adapter) }
         }
     }
 }

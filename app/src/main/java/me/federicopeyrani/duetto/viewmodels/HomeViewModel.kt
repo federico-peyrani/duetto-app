@@ -25,8 +25,12 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
+
         private val SHARING_STARTED = SharingStarted.WhileSubscribed()
+
         private const val TOP_N_GENRES = 6
+
+        private const val TOP_N_TRACKS = 5
 
         @JvmStatic
         @BindingAdapter("albumArtUrls")
@@ -51,4 +55,8 @@ class HomeViewModel @Inject constructor(
         .sortedByDescending(Pair<String, Int>::second)
         .take(TOP_N_GENRES)
         .toMap()
+
+    suspend fun getTopTracks() = spotifyRepository.getTopTracks(TimeRange.MEDIUM_TERM, TOP_N_TRACKS)
+        .items
+        .map(TrackObject::toTrack)
 }
