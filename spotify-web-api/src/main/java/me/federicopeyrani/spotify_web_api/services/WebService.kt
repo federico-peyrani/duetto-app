@@ -8,7 +8,9 @@ import me.federicopeyrani.spotify_web_api.objects.AlbumListObject
 import me.federicopeyrani.spotify_web_api.objects.ArtistListObject
 import me.federicopeyrani.spotify_web_api.objects.ArtistObject
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
+import me.federicopeyrani.spotify_web_api.objects.CursorBasedPaginationObject
 import me.federicopeyrani.spotify_web_api.objects.PaginationObject
+import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -79,4 +81,14 @@ interface WebService {
         @Query("limit") @IntRange(from = 1, to = 50) limit: Int = 20,
         @Query("offset") @IntRange(from = 0) offset: Int = 0
     ): PaginationObject<TrackObject>
+
+    /**
+     * Get tracks from the current user’s recently played tracks.
+     */
+    @GET("me/player/recently-played")
+    suspend fun getRecentlyPlayedTracks(
+        @Query("limit") @IntRange(from = 1, to = 50) limit: Int = 20,
+        @Query("before") @IntRange(from = 0) before: Long? = null,
+        @Query("after") @IntRange(from = 0) after: Long? = null,
+    ): CursorBasedPaginationObject<PlayHistoryObject>
 }

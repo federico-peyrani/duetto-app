@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val spotifyRepository: SpotifyRepository,
+    private val spotifyRepository: SpotifyRepository
 ) : ViewModel() {
 
     companion object {
