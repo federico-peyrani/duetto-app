@@ -1,6 +1,7 @@
 package me.federicopeyrani.duetto.data
 
 import android.util.Log
+import androidx.annotation.IntRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -44,13 +45,18 @@ class SpotifyRepository @Inject constructor(
         }
     }.flowOn(context)
 
-    suspend fun getTopTracks(timeRange: TimeRange, limit: Int = 20) =
-        webService.getTopTracks(timeRange, limit = limit)
+    suspend fun getTopTracks(
+        timeRange: TimeRange,
+        @IntRange(from = 1, to = 50) limit: Int = 20
+    ) = webService.getTopTracks(timeRange, limit).items
 
-    suspend fun getTopArtists(timeRange: TimeRange) = webService.getTopArtists(timeRange)
+    suspend fun getTopArtists(
+        timeRange: TimeRange,
+        @IntRange(from = 1, to = 50) limit: Int = 20
+    ) = webService.getTopArtists(timeRange, limit).items
 
     suspend fun getTopGenres(timeRange: TimeRange): Map<String, Int> {
-        val topArtistsByTracks = getTopTracks(timeRange).items.flatMap { it.artists }
+        val topArtistsByTracks = getTopTracks(timeRange).flatMap { it.artists }
         return webService.getArtists(topArtistsByTracks)
             .flatMap { it.genres?.toList() ?: emptyList() }
             .groupingBy { it }

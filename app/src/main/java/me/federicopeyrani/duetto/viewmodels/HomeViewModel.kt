@@ -57,6 +57,5 @@ class HomeViewModel @Inject constructor(
         .toMap()
 
     suspend fun getTopTracks() = spotifyRepository.getTopTracks(TimeRange.MEDIUM_TERM, TOP_N_TRACKS)
-        .items
         .map(TrackObject::toTrack)
 }
