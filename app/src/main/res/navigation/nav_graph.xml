@@ -12,7 +12,7 @@
 
     <fragment
         android:id="@+id/fragment_favourite"
-        android:name="me.federicopeyrani.duetto.fragments.FragmentFavourite"
-        tools:layout="@layout/fragment_favourite" />
+        android:name="me.federicopeyrani.duetto.fragments.FragmentHistory"
+        tools:layout="@layout/fragment_history" />
 
 </navigation>

@@ -9,20 +9,20 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.adapters.RecentlyPlayedTracksAdapter
-import me.federicopeyrani.duetto.databinding.FragmentFavouriteBinding
+import me.federicopeyrani.duetto.databinding.FragmentHistoryBinding
 import me.federicopeyrani.duetto.viewmodels.HistoryViewModel
 
 @AndroidEntryPoint
-class FragmentFavourite : Fragment(R.layout.fragment_favourite) {
+class FragmentHistory : Fragment(R.layout.fragment_history) {
 
-    private lateinit var binding: FragmentFavouriteBinding
+    private lateinit var binding: FragmentHistoryBinding
 
     private val viewModel: HistoryViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentFavouriteBinding.bind(view)
+        binding = FragmentHistoryBinding.bind(view)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 

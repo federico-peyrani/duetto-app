@@ -8,6 +8,6 @@
     <item
         android:id="@id/fragment_favourite"
         android:enabled="true"
-        android:icon="@drawable/round_star_24"
-        android:title="@string/navigation_favourites" />
+        android:icon="@drawable/round_history_24"
+        android:title="@string/navigation_history" />
 </menu>

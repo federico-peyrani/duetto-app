@@ -4,7 +4,7 @@
 
     <!-- Navigation -->
     <string name="navigation_home">Home</string>
-    <string name="navigation_favourites">Favourites</string>
+    <string name="navigation_history">History</string>
 
     <string name="login">Login</string>
     <string name="login_success">Log in successful.</string>
