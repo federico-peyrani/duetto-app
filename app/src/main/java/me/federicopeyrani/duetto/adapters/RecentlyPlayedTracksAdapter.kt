@@ -6,29 +6,31 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import me.federicopeyrani.duetto.adapters.RecentlyPlayedTracksAdapter.TrackViewHolder
-import me.federicopeyrani.duetto.data.Track
-import me.federicopeyrani.duetto.databinding.TrackListItemBinding
+import me.federicopeyrani.duetto.data.PlayHistory
+import me.federicopeyrani.duetto.databinding.PlayHistoryListItemBinding
 
-class RecentlyPlayedTracksAdapter : PagingDataAdapter<Track, TrackViewHolder>(ItemCallback) {
+class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHolder>(ItemCallback) {
 
     class TrackViewHolder(
-        private val binding: TrackListItemBinding
+        private val binding: PlayHistoryListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(track: Track) {
-            binding.track = track
+        fun bind(playHistory: PlayHistory) {
+            binding.playHistory = playHistory
         }
     }
 
-    companion object ItemCallback : DiffUtil.ItemCallback<Track>() {
+    companion object ItemCallback : DiffUtil.ItemCallback<PlayHistory>() {
 
-        override fun areItemsTheSame(oldItem: Track, newItem: Track) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
+            oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Track, newItem: Track) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
+            oldItem == newItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackViewHolder {
-        val binding = TrackListItemBinding.inflate(
+        val binding = PlayHistoryListItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

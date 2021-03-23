@@ -17,6 +17,7 @@
         <item name="textAppearanceSubtitle1">@style/TextAppearance.Duetto.Subtitle1</item>
         <item name="textAppearanceSubtitle2">@style/TextAppearance.Duetto.Subtitle2</item>
         <item name="textAppearanceOverline">@style/TextAppearance.Duetto.Overline</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Duetto.Caption</item>
     </style>
 
     <style name="Theme.Duetto.NoActionBar">
@@ -44,4 +45,6 @@
     <style name="TextAppearance.Duetto.Overline" parent="TextAppearance.MaterialComponents.Overline">
         <item name="textAllCaps">true</item>
     </style>
+
+    <style name="TextAppearance.Duetto.Caption" parent="TextAppearance.MaterialComponents.Caption" />
 </resources>
