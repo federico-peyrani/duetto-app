@@ -1,5 +1,9 @@
 package me.federicopeyrani.spotify_web_api.services
 
+import android.support.annotation.IntRange
+import android.support.annotation.RestrictTo
+import android.support.annotation.RestrictTo.Scope
+import android.support.annotation.Size
 import me.federicopeyrani.spotify_web_api.objects.AlbumListObject
 import me.federicopeyrani.spotify_web_api.objects.ArtistListObject
 import me.federicopeyrani.spotify_web_api.objects.ArtistObject
@@ -16,7 +20,8 @@ interface WebService {
 
         // region Additional methods
 
-        suspend fun WebService.getArtists(artists: List<ArtistObject>): ArtistListObject =
+        @Suppress("RestrictedApi")
+        suspend fun WebService.getArtists(@Size(min = 1, max = 50) artists: List<ArtistObject>) =
             getArtists(artists.joinToString(",") { it.id })
 
         // endregion
@@ -43,6 +48,7 @@ interface WebService {
      * @param albumIds comma-separated list of the Spotify IDs for the albums. Maximum: 20 IDs.
      */
     @GET("albums")
+    @RestrictTo(Scope.SUBCLASSES)
     suspend fun getAlbums(@Query("ids") albumIds: String): AlbumListObject
 
     /**
@@ -51,6 +57,7 @@ interface WebService {
      * @param artistIds comma-separated list of the Spotify IDs for the artists. Maximum: 50 IDs.
      */
     @GET("artists")
+    @RestrictTo(Scope.SUBCLASSES)
     suspend fun getArtists(@Query("ids") artistIds: String): ArtistListObject
 
     /**
@@ -59,8 +66,8 @@ interface WebService {
     @GET("me/top/artists")
     suspend fun getTopArtists(
         @Query("time_range") timeRange: TimeRange,
-        @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
+        @Query("limit") @IntRange(from = 1, to = 50) limit: Int = 20,
+        @Query("offset") @IntRange(from = 0) offset: Int = 0
     ): PaginationObject<ArtistObject>
 
     /**
@@ -69,7 +76,7 @@ interface WebService {
     @GET("me/top/tracks")
     suspend fun getTopTracks(
         @Query("time_range") timeRange: TimeRange,
-        @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
+        @Query("limit") @IntRange(from = 1, to = 50) limit: Int = 20,
+        @Query("offset") @IntRange(from = 0) offset: Int = 0
     ): PaginationObject<TrackObject>
 }
