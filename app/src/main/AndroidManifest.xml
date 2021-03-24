@@ -26,7 +26,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="deify-login" />
+                    android:scheme="duetto-login" />
             </intent-filter>
 
         </activity>
