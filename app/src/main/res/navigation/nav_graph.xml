@@ -3,16 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragment_home">
+    app:startDestination="@id/navigation_fragment">
 
     <fragment
-        android:id="@+id/fragment_home"
-        android:name="me.federicopeyrani.duetto.fragments.FragmentHome"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_fragment"
+        android:name="me.federicopeyrani.duetto.fragments.FragmentNavigation"
+        tools:layout="@layout/fragment_navigation">
+
+        <action
+            android:id="@+id/action_navigation_fragment_to_track_detail_fragment"
+            app:destination="@id/track_detail_fragment" />
+
+    </fragment>
 
     <fragment
-        android:id="@+id/fragment_favourite"
-        android:name="me.federicopeyrani.duetto.fragments.FragmentHistory"
-        tools:layout="@layout/fragment_history" />
+        android:id="@+id/track_detail_fragment"
+        android:name="me.federicopeyrani.duetto.fragments.FragmentTrackDetail"
+        tools:layout="@layout/fragment_track_detail" />
 
 </navigation>
