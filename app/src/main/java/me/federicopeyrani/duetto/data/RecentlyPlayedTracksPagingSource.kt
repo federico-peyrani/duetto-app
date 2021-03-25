@@ -3,6 +3,8 @@ package me.federicopeyrani.duetto.data
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import me.federicopeyrani.spotify_web_api.services.WebService
 import okio.IOException
@@ -17,7 +19,9 @@ class RecentlyPlayedTracksPagingSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, PlayHistory> = try {
         val position = params.key
-        val pagination = webService.getRecentlyPlayedTracks(params.loadSize, before = position)
+        val pagination = withContext(Dispatchers.IO) {
+            webService.getRecentlyPlayedTracks(params.loadSize, before = position)
+        }
         LoadResult.Page(
             data = pagination.items.map(PlayHistoryObject::toPlayHistory),
             prevKey = if (position == null) null else pagination.cursors?.after,

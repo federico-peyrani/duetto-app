@@ -25,7 +25,7 @@
 
             <me.federicopeyrani.duetto.views.StackedBarsGraphView
                 android:id="@+id/graph"
-                style="@style/ShapeAppearance.Duetto.MediumComponent"
+                style="@style/ShapeAppearance.Duetto.SmallComponent"
                 android:layout_width="match_parent"
                 android:layout_height="72dp" />
 

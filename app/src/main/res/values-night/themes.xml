@@ -13,5 +13,20 @@
 
         <item name="android:windowBackground">@color/black</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
+
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Duetto.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Duetto.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.Duetto.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.Duetto.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Duetto.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Duetto.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Duetto.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Duetto.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Duetto.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Duetto.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Duetto.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Duetto.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.Duetto.Overline</item>
     </style>
+
 </resources>
