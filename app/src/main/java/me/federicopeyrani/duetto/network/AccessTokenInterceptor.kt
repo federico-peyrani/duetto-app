@@ -1,4 +1,4 @@
-package me.federicopeyrani.duetto.data
+package me.federicopeyrani.duetto.network
 
 import okhttp3.Interceptor
 import okhttp3.Response

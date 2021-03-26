@@ -7,8 +7,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import me.federicopeyrani.duetto.data.AccessTokenRepository
 import me.federicopeyrani.duetto.databinding.ActivityMainBinding
+import me.federicopeyrani.duetto.network.AccessTokenRepository
 import javax.inject.Inject
 
 @AndroidEntryPoint

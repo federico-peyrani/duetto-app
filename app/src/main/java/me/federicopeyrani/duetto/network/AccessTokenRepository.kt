@@ -1,4 +1,4 @@
-package me.federicopeyrani.duetto.data
+package me.federicopeyrani.duetto.network
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
