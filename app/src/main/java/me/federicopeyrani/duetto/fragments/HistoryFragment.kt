@@ -13,7 +13,7 @@ import me.federicopeyrani.duetto.databinding.FragmentHistoryBinding
 import me.federicopeyrani.duetto.viewmodels.HistoryViewModel
 
 @AndroidEntryPoint
-class FragmentHistory : Fragment(R.layout.fragment_history) {
+class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private lateinit var binding: FragmentHistoryBinding
 

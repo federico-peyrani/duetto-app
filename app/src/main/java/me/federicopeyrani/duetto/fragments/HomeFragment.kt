@@ -16,7 +16,7 @@ import me.federicopeyrani.duetto.viewmodels.HomeViewModel
 import me.federicopeyrani.duetto.views.StackedBarsGraphView
 
 @AndroidEntryPoint
-class FragmentHome : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
 

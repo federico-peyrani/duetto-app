@@ -1,4 +1,4 @@
-package me.federicopeyrani.duetto.data
+package me.federicopeyrani.duetto.network
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers

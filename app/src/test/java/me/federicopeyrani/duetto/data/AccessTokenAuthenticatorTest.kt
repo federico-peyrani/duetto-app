@@ -9,6 +9,9 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import me.federicopeyrani.duetto.network.AccessTokenAuthenticator
+import me.federicopeyrani.duetto.network.AccessTokenInterceptor
+import me.federicopeyrani.duetto.network.AccessTokenRepository
 import me.federicopeyrani.duetto.util.enqueueResponse
 import me.federicopeyrani.spotify_web_api.RetrofitBaseClient
 import me.federicopeyrani.spotify_web_api.create

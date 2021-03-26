@@ -17,8 +17,8 @@ import kotlinx.coroutines.withContext
 import me.federicopeyrani.duetto.consts.ClientParams.CLIENT_ID
 import me.federicopeyrani.duetto.consts.ClientParams.REDIRECT_URI
 import me.federicopeyrani.duetto.consts.ClientParams.SCOPES
-import me.federicopeyrani.duetto.data.AccessTokenRepository
 import me.federicopeyrani.duetto.databinding.ActivityFirstLaunchBinding
+import me.federicopeyrani.duetto.network.AccessTokenRepository
 import me.federicopeyrani.duetto.utils.Utils.randomString
 import me.federicopeyrani.duetto.utils.Utils.sha256
 import me.federicopeyrani.duetto.utils.Utils.toBase64Url

@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.federicopeyrani.duetto.data.AccessTokenAuthenticator
-import me.federicopeyrani.duetto.data.AccessTokenInterceptor
+import me.federicopeyrani.duetto.network.AccessTokenAuthenticator
+import me.federicopeyrani.duetto.network.AccessTokenInterceptor
 import me.federicopeyrani.spotify_web_api.RetrofitBaseClient
 import me.federicopeyrani.spotify_web_api.create
 import me.federicopeyrani.spotify_web_api.services.AuthService
