@@ -13,6 +13,7 @@ import me.federicopeyrani.spotify_web_api.objects.PaginationObject
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WebService {
@@ -43,6 +44,12 @@ interface WebService {
      */
     @GET("me/player")
     suspend fun getCurrentPlayback(): CurrentPlaybackObject
+
+    /**
+     * Get Spotify catalog information for a single track identified by its unique Spotify ID.
+     */
+    @GET("tracks/{id}")
+    suspend fun getTrack(@Path("id") trackId: String): TrackObject
 
     /**
      * Get Spotify catalog information for multiple albums identified by their Spotify IDs.

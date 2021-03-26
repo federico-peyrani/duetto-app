@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +42,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        val adapter = TrackAdapter()
+        // get top-level nav controller
+        val mainNavController = Navigation.findNavController(requireActivity(), R.id.nav_host)
+
+        val adapter = TrackAdapter(mainNavController)
         binding.topTracksCard.rank.adapter = adapter
 
         lifecycleScope.launchWhenCreated {

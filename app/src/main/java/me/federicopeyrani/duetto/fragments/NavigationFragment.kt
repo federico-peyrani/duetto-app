@@ -10,7 +10,7 @@ import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.databinding.FragmentNavigationBinding
 
 @AndroidEntryPoint
-class FragmentNavigation : Fragment(R.layout.fragment_navigation) {
+class NavigationFragment : Fragment(R.layout.fragment_navigation) {
 
     private lateinit var binding: FragmentNavigationBinding
 
@@ -20,7 +20,7 @@ class FragmentNavigation : Fragment(R.layout.fragment_navigation) {
         binding = FragmentNavigationBinding.bind(view)
 
         val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
+            childFragmentManager.findFragmentById(R.id.nav_pages) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigation.setupWithNavController(navController)
     }

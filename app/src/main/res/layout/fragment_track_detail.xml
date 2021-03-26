@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="track"
-            type="me.federicopeyrani.duetto.data.Track" />
+            name="viewModel"
+            type="me.federicopeyrani.duetto.viewmodels.TrackDetailViewModel" />
 
     </data>
 
@@ -16,7 +16,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/album_art"
-            albumArtUrls="@{track.albumArtUrls}"
+            albumArtUrls="@{viewModel.track.albumArtUrls}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@{track.title}"
+            android:text="@{viewModel.track.title}"
             android:textAppearance="?attr/textAppearanceHeadline5"
             app:layout_constraintEnd_toStartOf="@+id/track_duration"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{track.album}"
+            android:text="@{viewModel.track.album}"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             app:layout_constraintEnd_toStartOf="@+id/track_duration"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,7 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{track.duration}"
+            android:text="@{viewModel.track.duration}"
             android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="@id/track_title"
             app:layout_constraintEnd_toEndOf="parent"
