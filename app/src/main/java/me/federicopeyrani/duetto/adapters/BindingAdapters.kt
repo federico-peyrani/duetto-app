@@ -51,7 +51,7 @@ private class LoadImageTarget(private val view: ImageView) : Target {
 }
 
 @BindingAdapter("albumArtUrls")
-fun loadImage(view: ImageView, albumArtUrls: Array<ImageObject>?) {
+fun loadAlbumArtFromUrls(view: ImageView, albumArtUrls: Array<ImageObject>?) {
     // Choose the smallest image that is at least bigger or equal than the size of the
     // ImageView, sorting them by increasing size (even though they are already sorted by
     // decreasing height, sorting them makes the code more readable).
@@ -62,4 +62,12 @@ fun loadImage(view: ImageView, albumArtUrls: Array<ImageObject>?) {
         .load(url)
         .placeholder(R.drawable.img_album_art_placeholder)
         .into(LoadImageTarget(view))
+}
+
+@BindingAdapter("albumArtBitmap")
+fun loadAlbumArtFromBitmap(view: ImageView, bitmap: Bitmap?) {
+    val layoutParams = view.layoutParams
+    layoutParams.height = view.width
+    view.layoutParams = layoutParams
+    view.setImageBitmap(bitmap)
 }

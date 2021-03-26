@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import me.federicopeyrani.duetto.R
@@ -22,7 +23,7 @@ class TrackDetailFragment : Fragment(R.layout.fragment_track_detail) {
     lateinit var viewModelFactory: TrackDetailViewModel.Factory
 
     private val viewModel: TrackDetailViewModel by viewModels {
-        TrackDetailViewModel.FactoryImpl(viewModelFactory, args.trackId)
+        TrackDetailViewModel.create(viewModelFactory, args.trackId)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
