@@ -12,18 +12,23 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 class RecentlyPlayedTracksPagingSource @Inject constructor(
-    private val webService: WebService
+    private val webService: WebService,
+    private val playHistoryDao: PlayHistoryDao
 ) : PagingSource<Long, PlayHistory>() {
 
     override fun getRefreshKey(state: PagingState<Long, PlayHistory>): Long? = null
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, PlayHistory> = try {
         val position = params.key
+
         val pagination = withContext(Dispatchers.IO) {
             webService.getRecentlyPlayedTracks(params.loadSize, before = position)
         }
+        val data = pagination.items.map(PlayHistoryObject::toPlayHistory)
+        playHistoryDao.insertAll(data)
+
         LoadResult.Page(
-            data = pagination.items.map(PlayHistoryObject::toPlayHistory),
+            data = data,
             prevKey = if (position == null) null else pagination.cursors?.after,
             nextKey = pagination.cursors?.before
         )

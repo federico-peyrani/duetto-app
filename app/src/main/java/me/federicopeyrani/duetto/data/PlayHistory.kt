@@ -1,5 +1,8 @@
 package me.federicopeyrani.duetto.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import me.federicopeyrani.spotify_web_api.objects.ImageObject
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 
@@ -11,8 +14,9 @@ fun PlayHistoryObject.toPlayHistory() = PlayHistory(
     albumArtUrls = track.album.images
 )
 
+@Entity(tableName = "play_histories")
 class PlayHistory(
-    val playedAt: String,
+    @PrimaryKey @ColumnInfo(name = "played_at") val playedAt: String,
     val id: String,
     val title: String,
     val artist: String,
