@@ -1,6 +1,5 @@
 package me.federicopeyrani.duetto.data
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import me.federicopeyrani.spotify_web_api.objects.ImageObject
@@ -14,8 +13,8 @@ fun TrackObject.toTrack() = Track(
 )
 
 @Entity(tableName = "tracks")
-class Track(
-    @PrimaryKey @ColumnInfo(name = "id") val id: String,
+data class Track(
+    @PrimaryKey val id: String,
     val title: String,
     val artist: String,
     val albumArtUrls: Array<ImageObject>,

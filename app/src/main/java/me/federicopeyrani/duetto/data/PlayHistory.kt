@@ -1,27 +1,27 @@
 package me.federicopeyrani.duetto.data
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import me.federicopeyrani.spotify_web_api.objects.ImageObject
+import androidx.room.Embedded
+import androidx.room.Ignore
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+internal val dateFormat
+    get() = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
 
 fun PlayHistoryObject.toPlayHistory() = PlayHistory(
-    playedAt = playedAt,
-    id = track.id,
-    title = track.name,
-    artist = track.artists.joinToString(", ") { it.name },
-    albumArtUrls = track.album.images
+    playedAt = dateFormat.parse(playedAt)!!,
+    track = track.toTrack()
 )
 
-@Entity(tableName = "play_histories")
-class PlayHistory(
-    @PrimaryKey @ColumnInfo(name = "played_at") val playedAt: String,
-    val id: String,
-    val title: String,
-    val artist: String,
-    val albumArtUrls: Array<ImageObject>
+data class PlayHistory(
+    val playedAt: Date,
+    @Embedded val track: Track
 ) {
+
+    @Ignore
+    val playedAtString = playedAt.toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -30,14 +30,11 @@ class PlayHistory(
         other as PlayHistory
 
         if (playedAt != other.playedAt) return false
-        if (id != other.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = playedAt.hashCode()
-        result = 31 * result + id.hashCode()
-        return result
+        return playedAt.hashCode()
     }
 }
