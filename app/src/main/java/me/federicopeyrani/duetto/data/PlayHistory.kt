@@ -1,7 +1,6 @@
 package me.federicopeyrani.duetto.data
 
 import androidx.room.Embedded
-import androidx.room.Ignore
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -19,9 +18,6 @@ data class PlayHistory(
     val playedAt: Date,
     @Embedded val track: Track
 ) {
-
-    @Ignore
-    val playedAtString = playedAt.toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

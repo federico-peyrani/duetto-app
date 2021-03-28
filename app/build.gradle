@@ -6,6 +6,12 @@ plugins {
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += '-Xopt-in=androidx.paging.ExperimentalPagingApi'
+    }
+}
+
 android {
     signingConfigs {
         debug {

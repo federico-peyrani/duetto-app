@@ -6,6 +6,7 @@ import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Picasso.LoadedFrom.DISK
@@ -14,6 +15,8 @@ import com.squareup.picasso.Target
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.evaluators.AlphaSatColorMatrixEvaluator
 import me.federicopeyrani.spotify_web_api.objects.ImageObject
+import java.text.DateFormat
+import java.util.Date
 
 private class LoadImageTarget(private val view: ImageView) : Target {
 
@@ -62,4 +65,11 @@ fun loadImage(view: ImageView, albumArtUrls: Array<ImageObject>?) {
         .load(url)
         .placeholder(R.drawable.img_album_art_placeholder)
         .into(LoadImageTarget(view))
+}
+
+@BindingAdapter("date")
+fun displayDate(view: TextView, date: Date) {
+    val dateString =
+        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(date)
+    view.text = dateString
 }

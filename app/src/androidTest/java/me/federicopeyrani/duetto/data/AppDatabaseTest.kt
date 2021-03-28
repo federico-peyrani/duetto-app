@@ -1,9 +1,11 @@
 package me.federicopeyrani.duetto.data
 
 import android.content.Context
+import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -54,5 +56,24 @@ class AppDatabaseTest {
             track.title shouldBe "I Disagree"
             playedAt shouldBe Date.from(instant)
         }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldReturnPagingSource() = runBlocking<Unit> {
+        db.clearAllTables()
+
+        val instant = Instant.now()
+        val playHistories = (0..100).map {
+            val newInstant = instant.plusSeconds(it.toLong())
+            PlayHistoryEntity(Date.from(newInstant), "12ef")
+        }
+        playHistoryDao.insertAll(playHistories)
+
+        val loadParams = PagingSource.LoadParams.Append(0, 10, false)
+        val data = playHistoryDao.getPlayHistoryPagingSource().load(loadParams)
+        data as PagingSource.LoadResult.Page<Int, PlayHistoryEntity>
+
+        data.data shouldHaveSize 10
     }
 }

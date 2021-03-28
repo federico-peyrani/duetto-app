@@ -6,16 +6,21 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import me.federicopeyrani.duetto.data.RecentlyPlayedTracksPagingSource
+import kotlinx.coroutines.launch
+import me.federicopeyrani.duetto.data.SpotifyRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val recentlyPlayedTracksPagingSource: RecentlyPlayedTracksPagingSource
+    private val spotifyRepository: SpotifyRepository,
 ) : ViewModel() {
 
     val recentlyPlayed = Pager(
         config = PagingConfig(10),
-        pagingSourceFactory = ::recentlyPlayedTracksPagingSource
+        pagingSourceFactory = spotifyRepository::getPlayHistoryPagingSource
     ).flow.cachedIn(viewModelScope)
+
+    init {
+        viewModelScope.launch { spotifyRepository.updatePlayHistory() }
+    }
 }

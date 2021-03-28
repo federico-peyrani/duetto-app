@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
+import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import me.federicopeyrani.spotify_web_api.services.WebService
 import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtists
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
@@ -18,6 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class SpotifyRepository @Inject constructor(
     private val webService: WebService,
+    private val trackDao: TrackDao,
+    private val playHistoryDao: PlayHistoryDao
 ) {
 
     companion object {
@@ -61,5 +64,15 @@ class SpotifyRepository @Inject constructor(
             .flatMap { it.genres?.toList() ?: emptyList() }
             .groupingBy { it }
             .eachCount()
+    }
+
+    fun getPlayHistoryPagingSource() = playHistoryDao.getPlayHistoryPagingSource()
+
+    suspend fun updatePlayHistory() {
+        val playHistoryObjects = webService.getRecentlyPlayedTracks(50).items
+        val playHistoryItems = playHistoryObjects.map(PlayHistoryObject::toPlayHistory)
+
+        trackDao.insertAll(playHistoryItems.map { it.track })
+        playHistoryDao.insertAll(playHistoryItems.map(PlayHistory::toPlayHistoryEntity))
     }
 }

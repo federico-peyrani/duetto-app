@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import me.federicopeyrani.duetto.R
@@ -27,6 +28,13 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
         binding.viewModel = viewModel
 
         val adapter = RecentlyPlayedTracksAdapter()
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.recentlyPlayed.scrollToPosition(0)
+                }
+            }
+        })
         binding.recentlyPlayed.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
