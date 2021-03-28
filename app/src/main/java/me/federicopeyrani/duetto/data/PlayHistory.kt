@@ -1,22 +1,26 @@
 package me.federicopeyrani.duetto.data
 
-import me.federicopeyrani.spotify_web_api.objects.ImageObject
+import androidx.room.Embedded
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+fun String.utcStringToDate(): Date? {
+    val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    parser.timeZone = TimeZone.getTimeZone("UTC")
+    return parser.parse(this)
+}
 
 fun PlayHistoryObject.toPlayHistory() = PlayHistory(
-    playedAt = playedAt,
-    id = track.id,
-    title = track.name,
-    artist = track.artists.joinToString(", ") { it.name },
-    albumArtUrls = track.album.images
+    playedAt = playedAt.utcStringToDate()!!,
+    track = track.toTrack()
 )
 
-class PlayHistory(
-    val playedAt: String,
-    val id: String,
-    val title: String,
-    val artist: String,
-    val albumArtUrls: Array<ImageObject>
+data class PlayHistory(
+    val playedAt: Date,
+    @Embedded val track: Track
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -26,14 +30,11 @@ class PlayHistory(
         other as PlayHistory
 
         if (playedAt != other.playedAt) return false
-        if (id != other.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = playedAt.hashCode()
-        result = 31 * result + id.hashCode()
-        return result
+        return playedAt.hashCode()
     }
 }

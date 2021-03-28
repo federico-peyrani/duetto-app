@@ -11,6 +11,15 @@ import me.federicopeyrani.duetto.databinding.PlayHistoryListItemBinding
 
 class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHolder>(ItemCallback) {
 
+    private object ItemCallback : DiffUtil.ItemCallback<PlayHistory>() {
+
+        override fun areItemsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
+            oldItem == newItem
+
+        override fun areContentsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
+            oldItem == newItem
+    }
+
     class TrackViewHolder(
         private val binding: PlayHistoryListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -18,15 +27,6 @@ class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHold
         fun bind(playHistory: PlayHistory) {
             binding.playHistory = playHistory
         }
-    }
-
-    companion object ItemCallback : DiffUtil.ItemCallback<PlayHistory>() {
-
-        override fun areItemsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
-            oldItem.id == newItem.id
-
-        override fun areContentsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
-            oldItem == newItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackViewHolder {
