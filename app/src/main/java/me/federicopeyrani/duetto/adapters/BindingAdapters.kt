@@ -81,3 +81,11 @@ fun displayDate(view: TextView, date: Date?) {
         view.text = dateString
     }
 }
+
+@BindingAdapter("albumArtBitmap")
+fun loadAlbumArtFromBitmap(view: ImageView, bitmap: Bitmap?) {
+    val layoutParams = view.layoutParams
+    layoutParams.height = view.width
+    view.layoutParams = layoutParams
+    view.setImageBitmap(bitmap)
+}

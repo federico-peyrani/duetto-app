@@ -48,6 +48,10 @@ class SpotifyRepository @Inject constructor(
         }
     }.flowOn(context)
 
+    fun getTrack(trackId: String): Flow<Track> = flow {
+        emit(webService.getTrack(trackId).toTrack())
+    }
+
     suspend fun getTopTracks(
         timeRange: TimeRange,
         @IntRange(from = 1, to = 50) limit: Int = 20
