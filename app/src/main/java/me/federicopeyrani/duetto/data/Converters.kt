@@ -14,7 +14,7 @@ class Converters {
 
     @TypeConverter
     fun fromArrayImageObject(imageObjectArray: Array<ImageObject>?): String? =
-        imageObjectArray?.joinToString(",") { "${it.height}:${it.width}:${it.url}" }
+        imageObjectArray?.joinToString(",") { "${it.height}::${it.width}::${it.url}" }
 
     @TypeConverter
     fun fromString(string: String?): Array<ImageObject> =
@@ -22,7 +22,7 @@ class Converters {
             emptyArray()
         } else {
             string.split(",").map {
-                val split = it.split(":")
+                val split = it.split("::")
                 ImageObject(split[0].toInt(), split[1].toInt(), split[2])
             }.toTypedArray()
         }
