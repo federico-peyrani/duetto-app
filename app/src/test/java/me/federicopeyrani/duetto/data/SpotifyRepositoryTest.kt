@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.collections.shouldBeUnique
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import me.federicopeyrani.duetto.util.enqueueEmptyResponse
 import me.federicopeyrani.duetto.util.enqueueResponse
@@ -30,7 +31,7 @@ class SpotifyRepositoryTest {
 
     private val webService: WebService = retrofit.create()
 
-    private val spotifyRepository = SpotifyRepository(webService)
+    private val spotifyRepository = SpotifyRepository(webService, mockk(), mockk())
 
     @Test
     fun `given current playback is not null, returns current playback`() = test {
