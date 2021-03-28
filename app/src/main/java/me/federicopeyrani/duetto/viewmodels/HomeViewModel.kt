@@ -5,12 +5,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import me.federicopeyrani.duetto.data.SpotifyRepository
 import me.federicopeyrani.duetto.data.Track
 import me.federicopeyrani.duetto.data.toTrack
+import me.federicopeyrani.duetto.utils.generatePalette
+import me.federicopeyrani.duetto.utils.loadBitmap
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import javax.inject.Inject
@@ -29,9 +32,19 @@ class HomeViewModel @Inject constructor(
         private const val TOP_N_TRACKS = 5
     }
 
-    val trackObject: StateFlow<Track?> = spotifyRepository.getCurrentPlayback()
+    val currentPlayback: StateFlow<Track?> = spotifyRepository.getCurrentPlayback()
         .mapNotNull { it.item }
         .map(TrackObject::toTrack)
+        .stateIn(viewModelScope, SHARING_STARTED, null)
+
+    val currentPlaybackBitmap = currentPlayback
+        .mapNotNull { track -> track?.albumArtUrls?.maxByOrNull { it.width }?.url }
+        .map { loadBitmap(it) }
+        .stateIn(viewModelScope, SHARING_STARTED, null)
+
+    val currentPlaybackSwatch = currentPlaybackBitmap
+        .filterNotNull()
+        .map { it.generatePalette()?.vibrantSwatch }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     suspend fun getTopGenres() = spotifyRepository.getTopGenres(TimeRange.MEDIUM_TERM)

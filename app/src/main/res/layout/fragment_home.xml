@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="me.federicopeyrani.duetto.viewmodels.HomeViewModel" />
@@ -28,7 +30,9 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                bind:track="@{viewModel.trackObject}" />
+                bind:bitmap="@{viewModel.currentPlaybackBitmap}"
+                bind:swatch="@{viewModel.currentPlaybackSwatch}"
+                bind:track="@{viewModel.currentPlayback}" />
 
             <include
                 android:id="@+id/top_genres_card"
