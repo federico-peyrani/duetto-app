@@ -8,7 +8,7 @@ import me.federicopeyrani.spotify_web_api.objects.TrackObject
 fun TrackObject.toTrack() = Track(
     id = id,
     title = name,
-    artist = artists.joinToString(", ") { it.name },
+    artist = artists.map { it.toArtist() }.toTypedArray(),
     albumArtUrls = album.images
 )
 
@@ -16,7 +16,7 @@ fun TrackObject.toTrack() = Track(
 data class Track(
     @PrimaryKey val id: String,
     val title: String,
-    val artist: String,
+    val artist: Array<Artist>,
     val albumArtUrls: Array<ImageObject>,
 ) {
 

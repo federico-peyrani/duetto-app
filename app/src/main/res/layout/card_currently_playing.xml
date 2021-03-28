@@ -66,11 +66,11 @@
 
                 <TextView
                     android:id="@+id/song_artist"
+                    artists="@{track.artist}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@{track.artist}"
                     android:textAppearance="?attr/textAppearanceSubtitle2" />
 
             </LinearLayout>

@@ -13,17 +13,32 @@ class Converters {
     fun dateToTimestamp(date: Date?): Long? = date?.time
 
     @TypeConverter
-    fun fromArrayImageObject(imageObjectArray: Array<ImageObject>?): String? =
+    fun fromImageObjectArray(imageObjectArray: Array<ImageObject>?): String? =
         imageObjectArray?.joinToString(",") { "${it.height}::${it.width}::${it.url}" }
 
     @TypeConverter
-    fun fromString(string: String?): Array<ImageObject> =
+    fun stringToImageObjectArray(string: String?): Array<ImageObject> =
         if (string == null || string.isNullOrBlank()) {
             emptyArray()
         } else {
             string.split(",").map {
                 val split = it.split("::")
                 ImageObject(split[0].toInt(), split[1].toInt(), split[2])
+            }.toTypedArray()
+        }
+
+    @TypeConverter
+    fun fromArtistArray(imageObjectArray: Array<Artist>?): String? =
+        imageObjectArray?.joinToString(",") { "${it.id}::${it.name}" }
+
+    @TypeConverter
+    fun stringToArtistArray(string: String?): Array<Artist> =
+        if (string == null || string.isNullOrBlank()) {
+            emptyArray()
+        } else {
+            string.split(",").map {
+                val split = it.split("::")
+                Artist(split[0], split[1])
             }.toTypedArray()
         }
 }

@@ -42,6 +42,7 @@
 
         <TextView
             android:id="@+id/mtrl_list_item_secondary_text"
+            artists="@{playHistory.track.artist}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/mtrl_list_item_text"
@@ -52,7 +53,6 @@
             android:layout_toEndOf="@id/mtrl_list_item_icon"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="@{playHistory.track.artist}"
             android:textAppearance="?attr/textAppearanceBody2" />
 
         <TextView
