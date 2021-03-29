@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
-
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
@@ -80,10 +79,6 @@ android {
     }
 }
 
-kapt {
-    correctErrorTypes true
-}
-
 dependencies {
     implementation project(':spotify-web-api')
 
@@ -132,6 +127,6 @@ dependencies {
     // Testing
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.0'
 
-    // Picasso
-    implementation 'com.squareup.picasso:picasso:2.8'
+    // Coil
+    implementation("io.coil-kt:coil-base:1.1.1")
 }

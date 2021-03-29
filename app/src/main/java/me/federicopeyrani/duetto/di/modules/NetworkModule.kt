@@ -1,8 +1,11 @@
-package me.federicopeyrani.duetto.di
+package me.federicopeyrani.duetto.di.modules
 
+import android.content.Context
+import coil.ImageLoader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.federicopeyrani.duetto.network.AccessTokenAuthenticator
 import me.federicopeyrani.duetto.network.AccessTokenInterceptor
@@ -18,28 +21,43 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+    @Provides
+    @Singleton
+    fun provideHttpLoggingInterceptor() = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BASIC
     }
 
     @Provides
     @Singleton
-    fun provideAuthService(): AuthService {
-        val okHttpClient = OkHttpClient.Builder()
+    fun provideOkHttpBaseClient(httpLoggingInterceptor: HttpLoggingInterceptor) =
+        OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .build()
-        val retrofit = RetrofitBaseClient(AuthService.BASE_URL, okHttpClient)
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(
+        @ApplicationContext context: Context,
+        baseOkHttpClient: OkHttpClient
+    ) = ImageLoader.Builder(context)
+        .okHttpClient(baseOkHttpClient)
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideAuthService(baseOkHttpClient: OkHttpClient): AuthService {
+        val retrofit = RetrofitBaseClient(AuthService.BASE_URL, baseOkHttpClient)
         return retrofit.create()
     }
 
     @Provides
     @Singleton
     fun provideWebService(
+        baseOkHttpClient: OkHttpClient,
         accessTokenInterceptor: AccessTokenInterceptor,
         accessTokenAuthenticator: AccessTokenAuthenticator,
     ): WebService {
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
+        val okHttpClient = baseOkHttpClient.newBuilder()
             .addInterceptor(accessTokenInterceptor)
             .authenticator(accessTokenAuthenticator)
             .build()

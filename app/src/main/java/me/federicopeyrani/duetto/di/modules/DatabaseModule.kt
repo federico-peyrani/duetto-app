@@ -1,4 +1,4 @@
-package me.federicopeyrani.duetto.di
+package me.federicopeyrani.duetto.di.modules
 
 import android.content.Context
 import androidx.room.Room

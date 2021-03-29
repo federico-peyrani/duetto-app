@@ -9,18 +9,19 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
+import me.federicopeyrani.duetto.adapters.PaletteGenerator
 import me.federicopeyrani.duetto.data.SpotifyRepository
 import me.federicopeyrani.duetto.data.Track
 import me.federicopeyrani.duetto.data.toTrack
-import me.federicopeyrani.duetto.utils.generatePalette
-import me.federicopeyrani.duetto.utils.loadBitmap
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import javax.inject.Inject
 
+/** [https://stackoverflow.com/questions/66216839/inject-context-with-hilt-this-field-leaks-a-context-object] */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val spotifyRepository: SpotifyRepository
+    private val spotifyRepository: SpotifyRepository,
+    private val paletteGenerator: PaletteGenerator
 ) : ViewModel() {
 
     companion object {
@@ -39,12 +40,12 @@ class HomeViewModel @Inject constructor(
 
     val currentPlaybackBitmap = currentPlayback
         .mapNotNull { track -> track?.albumArtUrls?.maxByOrNull { it.width }?.url }
-        .map { loadBitmap(it) }
+        .map { paletteGenerator.loadBitmap(it) }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     val currentPlaybackSwatch = currentPlaybackBitmap
         .filterNotNull()
-        .map { it.generatePalette()?.vibrantSwatch }
+        .map { paletteGenerator.generatePalette(it).vibrantSwatch }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     suspend fun getTopGenres() = spotifyRepository.getTopGenres(TimeRange.MEDIUM_TERM)

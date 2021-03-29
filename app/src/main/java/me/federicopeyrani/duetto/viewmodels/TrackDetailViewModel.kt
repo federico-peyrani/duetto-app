@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
+import me.federicopeyrani.duetto.adapters.PaletteGenerator
 import me.federicopeyrani.duetto.data.SpotifyRepository
-import me.federicopeyrani.duetto.utils.generatePalette
-import me.federicopeyrani.duetto.utils.loadBitmap
 
 class TrackDetailViewModel @AssistedInject constructor(
     @Assisted private val trackId: String,
-    private val spotifyRepository: SpotifyRepository
+    private val spotifyRepository: SpotifyRepository,
+    private val paletteGenerator: PaletteGenerator
 ) : ViewModel() {
 
     @AssistedFactory
@@ -41,11 +41,11 @@ class TrackDetailViewModel @AssistedInject constructor(
 
     val bitmap = track
         .mapNotNull { track -> track?.albumArtUrls?.maxByOrNull { it.width }?.url }
-        .map { loadBitmap(it) }
+        .map { paletteGenerator.loadBitmap(it) }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     val palette = bitmap
         .filterNotNull()
-        .map { it.generatePalette()?.vibrantSwatch }
+        .map { paletteGenerator.generatePalette(it).vibrantSwatch }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 }
