@@ -16,8 +16,7 @@ class MainActivity : AppCompatActivity() {
     /** The view binding for this activity. */
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    lateinit var accessTokenRepository: AccessTokenRepository
+    @Inject lateinit var accessTokenRepository: AccessTokenRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

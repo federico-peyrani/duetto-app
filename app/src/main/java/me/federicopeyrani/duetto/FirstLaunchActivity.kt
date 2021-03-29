@@ -42,11 +42,9 @@ class FirstLaunchActivity : AppCompatActivity() {
     private lateinit var codeVerifier: String
     private lateinit var state: String
 
-    @Inject
-    lateinit var authService: AuthService
+    @Inject lateinit var authService: AuthService
 
-    @Inject
-    lateinit var accessTokenRepository: AccessTokenRepository
+    @Inject lateinit var accessTokenRepository: AccessTokenRepository
 
     private fun onLoginButtonClicked() {
         // generate random strings for the state and code verifier
