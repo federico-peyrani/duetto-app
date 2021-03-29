@@ -17,7 +17,6 @@ import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import javax.inject.Inject
 
-/** [https://stackoverflow.com/questions/66216839/inject-context-with-hilt-this-field-leaks-a-context-object] */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val spotifyRepository: SpotifyRepository,
@@ -34,8 +33,7 @@ class HomeViewModel @Inject constructor(
     }
 
     val currentPlayback: StateFlow<Track?> = spotifyRepository.getCurrentPlayback()
-        .mapNotNull { it.item }
-        .map(TrackObject::toTrack)
+        .map { it?.item?.toTrack() }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     val currentPlaybackBitmap = currentPlayback

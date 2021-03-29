@@ -29,7 +29,7 @@ class SpotifyRepository @Inject constructor(
 
     private val context = Dispatchers.IO
 
-    fun getCurrentPlayback(): Flow<CurrentPlaybackObject> = flow {
+    fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
             try {
                 val currentPlaybackObject = webService.getCurrentPlayback()
@@ -38,6 +38,7 @@ class SpotifyRepository @Inject constructor(
                 // when no item is being played, a KotlinNullPointerException is thrown because
                 // the body of the response is empty
                 Log.d("SpotifyRepository", "No item playing")
+                emit(null)
             } catch (e: HttpException) {
                 // generic HttpExceptions, such as an invalid login
                 Log.d("SpotifyRepository", "getCurrentPlayback() failed, retrying.")

@@ -30,6 +30,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
+                android:visibility="@{viewModel.currentPlayback == null ? View.GONE : View.VISIBLE}"
                 bind:bitmap="@{viewModel.currentPlaybackBitmap}"
                 bind:swatch="@{viewModel.currentPlaybackSwatch}"
                 bind:track="@{viewModel.currentPlayback}" />
