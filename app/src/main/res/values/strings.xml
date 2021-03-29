@@ -20,5 +20,8 @@
     <!-- Card top tracks -->
     <string name="card_top_tracks_overline">Top tracks</string>
 
+    <!-- Card top artists -->
+    <string name="card_top_artists_overline">Top artists</string>
+
     <string name="play_history_date_time_format">%s\n%s</string>
 </resources>

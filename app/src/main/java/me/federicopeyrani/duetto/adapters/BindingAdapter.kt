@@ -43,6 +43,23 @@ class BindingAdapter @Inject constructor(
         view.text = artists?.joinToString(", ") { it.name }
     }
 
+    @BindingAdapter("artistImages")
+    fun loadArtistsImage(view: ImageView, images: Array<ImageObject>?) {
+        val width = view.width
+        val url = images?.sortedBy { it.width }?.first { it.width >= width }?.url
+
+        val layoutParams = view.layoutParams
+        layoutParams.height = view.width
+        view.layoutParams = layoutParams
+
+        val imageRequest = ImageRequest.Builder(context)
+            .allowHardware(false)
+            .data(url)
+            .target(view)
+            .build()
+        imageLoader.enqueue(imageRequest)
+    }
+
     @BindingAdapter("date")
     fun displayDate(view: TextView, date: Date?) {
         date?.let {

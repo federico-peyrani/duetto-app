@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:shapeAppearance="@style/ShapeAppearance.Duetto.MediumComponent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/overline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/card_top_artists_overline"
+            android:textAppearance="?attr/textAppearanceOverline" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="16dp"
+            android:nestedScrollingEnabled="true"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

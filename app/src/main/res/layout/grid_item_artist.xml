@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="artist"
+            type="me.federicopeyrani.duetto.data.Artist" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            artistImages="@{artist.images}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Duetto.MediumComponent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{artist.name}"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+    </FrameLayout>
+
+</layout>

@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.stateIn
 import me.federicopeyrani.duetto.adapters.PaletteGenerator
 import me.federicopeyrani.duetto.data.SpotifyRepository
 import me.federicopeyrani.duetto.data.Track
+import me.federicopeyrani.duetto.data.toArtist
 import me.federicopeyrani.duetto.data.toTrack
+import me.federicopeyrani.spotify_web_api.objects.ArtistObject
 import me.federicopeyrani.spotify_web_api.objects.TrackObject
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import javax.inject.Inject
@@ -30,6 +32,8 @@ class HomeViewModel @Inject constructor(
         private const val TOP_N_GENRES = 6
 
         private const val TOP_N_TRACKS = 5
+
+        private const val TOP_N_ARTISTS = 6
     }
 
     val currentPlayback: StateFlow<Track?> = spotifyRepository.getCurrentPlayback()
@@ -52,6 +56,10 @@ class HomeViewModel @Inject constructor(
         .take(TOP_N_GENRES)
         .toMap()
 
-    suspend fun getTopTracks() = spotifyRepository.getTopTracks(TimeRange.MEDIUM_TERM, TOP_N_TRACKS)
+    suspend fun getTopTracks() = spotifyRepository.getTopTracks(TimeRange.SHORT_TERM, TOP_N_TRACKS)
         .map(TrackObject::toTrack)
+
+    suspend fun getTopArtists() =
+        spotifyRepository.getTopArtists(TimeRange.SHORT_TERM, TOP_N_ARTISTS)
+            .map(ArtistObject::toArtist)
 }

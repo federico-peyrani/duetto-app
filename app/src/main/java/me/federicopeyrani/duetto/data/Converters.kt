@@ -50,7 +50,7 @@ class Converters {
         } else {
             string.split(",,").map {
                 val split = it.split("::")
-                Artist(split[0], split[1])
+                Artist(split[0], split[1], emptyArray())
             }.toTypedArray()
         }
 }
