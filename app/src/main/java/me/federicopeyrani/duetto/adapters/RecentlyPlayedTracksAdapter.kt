@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import me.federicopeyrani.duetto.adapters.RecentlyPlayedTracksAdapter.TrackViewHolder
 import me.federicopeyrani.duetto.data.PlayHistory
-import me.federicopeyrani.duetto.databinding.PlayHistoryListItemBinding
+import me.federicopeyrani.duetto.databinding.ListItemPlayHistoryBinding
 
 class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHolder>(ItemCallback) {
 
@@ -21,7 +21,7 @@ class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHold
     }
 
     class TrackViewHolder(
-        private val binding: PlayHistoryListItemBinding
+        private val binding: ListItemPlayHistoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(playHistory: PlayHistory) {
@@ -30,7 +30,7 @@ class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHold
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackViewHolder {
-        val binding = PlayHistoryListItemBinding.inflate(
+        val binding = ListItemPlayHistoryBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import me.federicopeyrani.duetto.data.Track
-import me.federicopeyrani.duetto.databinding.TrackListItemBinding
+import me.federicopeyrani.duetto.databinding.ListItemTrackBinding
 import me.federicopeyrani.duetto.fragments.NavigationFragmentDirections
 
 class TrackAdapter(
@@ -13,7 +13,7 @@ class TrackAdapter(
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
     inner class TrackViewHolder(
-        private val binding: TrackListItemBinding
+        private val binding: ListItemTrackBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private fun navigateToTrackDetail(trackId: String) {
@@ -37,7 +37,7 @@ class TrackAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): TrackViewHolder {
-        val binding = TrackListItemBinding.inflate(
+        val binding = ListItemTrackBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
