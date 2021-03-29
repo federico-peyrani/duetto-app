@@ -15,7 +15,7 @@
         android:layout_height="72dp">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/mtrl_list_item_icon"
+            android:id="@+id/album_art"
             albumArtUrls="@{playHistory.track.albumArtUrls}"
             android:layout_width="56dp"
             android:layout_height="56dp"
@@ -26,14 +26,14 @@
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Duetto.MediumComponent" />
 
         <TextView
-            android:id="@+id/mtrl_list_item_text"
+            android:id="@+id/track_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_toStartOf="@+id/mtrl_list_item_tertiary_text"
-            android:layout_toEndOf="@id/mtrl_list_item_icon"
+            android:layout_toStartOf="@+id/play_history_date"
+            android:layout_toEndOf="@id/album_art"
             android:ellipsize="end"
             android:paddingTop="16dp"
             android:singleLine="true"
@@ -41,22 +41,22 @@
             android:textAppearance="?attr/textAppearanceSubtitle1" />
 
         <TextView
-            android:id="@+id/mtrl_list_item_secondary_text"
+            android:id="@+id/track_artist"
             artists="@{playHistory.track.artist}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/mtrl_list_item_text"
+            android:layout_below="@id/track_title"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_toStartOf="@+id/mtrl_list_item_tertiary_text"
-            android:layout_toEndOf="@id/mtrl_list_item_icon"
+            android:layout_toStartOf="@+id/play_history_date"
+            android:layout_toEndOf="@id/album_art"
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?attr/textAppearanceBody2" />
 
         <TextView
-            android:id="@+id/mtrl_list_item_tertiary_text"
+            android:id="@+id/play_history_date"
             date="@{playHistory.playedAt}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,6 +64,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:gravity="end"
             android:textAppearance="?attr/textAppearanceCaption" />
 
     </RelativeLayout>

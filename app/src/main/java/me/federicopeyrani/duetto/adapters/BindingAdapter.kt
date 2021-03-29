@@ -8,6 +8,7 @@ import androidx.databinding.BindingAdapter
 import coil.ImageLoader
 import coil.request.ImageRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.data.Artist
 import me.federicopeyrani.spotify_web_api.objects.ImageObject
 import java.text.DateFormat
@@ -15,9 +16,6 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * [https://proandroiddev.com/data-binding-adapters-and-dependency-injection-a-short-love-story-1cbee20fa8ff]
- */
 @Singleton
 class BindingAdapter @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -48,9 +46,13 @@ class BindingAdapter @Inject constructor(
     @BindingAdapter("date")
     fun displayDate(view: TextView, date: Date?) {
         date?.let {
-            val dateString =
-                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(it)
-            view.text = dateString
+            val dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(it)
+            val timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(it)
+            view.text = context.getString(
+                R.string.play_history_date_time_format,
+                dateString,
+                timeString
+            )
         }
     }
 
