@@ -27,7 +27,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private suspend fun setTopGenres() {
         val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
-        binding.topGenresCard.graph.bars = genres.map {
+        binding.topGenres.bars = genres.map {
             StackedBarsGraphView.Bar(it.key, it.value.toFloat())
         }
     }
@@ -53,12 +53,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val mainNavController = Navigation.findNavController(requireActivity(), R.id.nav_host)
 
         val trackAdapter = TrackAdapter(mainNavController)
-        binding.topTracksCard.rank.adapter = trackAdapter
+        binding.topTracks.adapter = trackAdapter
 
         val artistAdapter = ArtistAdapter()
         val artistLayoutManager = GridLayoutManager(requireContext(), 2)
-        binding.topArtistsCard.rank.adapter = artistAdapter
-        binding.topArtistsCard.rank.layoutManager = artistLayoutManager
+        binding.topArtists.adapter = artistAdapter
+        binding.topArtists.layoutManager = artistLayoutManager
 
         lifecycleScope.launchWhenCreated {
             launch { setTopGenres() }
