@@ -10,6 +10,10 @@
     <string name="login_success">Log in successful.</string>
     <string name="login_error">There was an error logging in.</string>
 
+    <!-- Fragment home -->
+    <string name="error_network">Can\'t connect to the network: %s</string>
+    <string name="error_generic">A generic error occurred</string>
+
     <!-- Card currently playing -->
     <string name="overline">Currently playing</string>
     <string name="content_description">Album art</string>
