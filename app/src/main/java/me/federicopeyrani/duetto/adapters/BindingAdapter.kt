@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import coil.ImageLoader
 import coil.request.ImageRequest
+import coil.transform.RoundedCornersTransformation
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.federicopeyrani.duetto.R
@@ -23,20 +24,23 @@ class BindingAdapter @Inject constructor(
     private val imageLoader: ImageLoader
 ) {
 
+    private inline fun request(builder: ImageRequest.Builder.() -> Unit) {
+        val request = ImageRequest.Builder(context).apply(builder).build()
+        imageLoader.enqueue(request)
+    }
+
     @BindingAdapter("albumArtUrls")
     fun loadImage(view: ImageView, albumArtUrls: Array<ImageObject>?) {
         // Choose the smallest image that is at least bigger or equal than the size of the
         // ImageView, sorting them by increasing size (even though they are already sorted by
         // decreasing height, sorting them makes the code more readable).
         val height = view.height
-        val url = albumArtUrls?.sortedBy { it.height }?.first { it.height >= height }?.url
+        val url = albumArtUrls?.sortedBy { it.height }?.first { it.height >= height }?.url ?: return
 
-        val imageRequest = ImageRequest.Builder(context)
-            .allowHardware(false)
-            .data(url)
-            .target(view)
-            .build()
-        imageLoader.enqueue(imageRequest)
+        request {
+            data(url)
+            target(view)
+        }
     }
 
     @BindingAdapter("artists")
@@ -47,34 +51,26 @@ class BindingAdapter @Inject constructor(
     @BindingAdapter("artistImages")
     fun loadArtistsImage(view: ImageView, images: Array<ImageObject>?) {
         val width = view.width
-        val url = images?.sortedBy { it.width }?.first { it.width >= width }?.url
+        val url = images?.sortedBy { it.width }?.first { it.width >= width }?.url ?: return
 
         val layoutParams = view.layoutParams
         layoutParams.height = view.width
         view.layoutParams = layoutParams
 
-        val imageRequest = ImageRequest.Builder(context)
-            .allowHardware(false)
-            .data(url)
-            .target(view)
-            .build()
-        imageLoader.enqueue(imageRequest)
+        request {
+            data(url)
+            target(view)
+        }
     }
 
     @BindingAdapter("chipArtistImage")
     fun loadChipArtistImage(view: Chip, images: Array<ImageObject>?) {
         val url = images?.minByOrNull { it.width }?.url ?: return
-
-        val imageRequest = ImageRequest.Builder(context)
-            .allowHardware(false)
-            .data(url)
-            .target(
-                onSuccess = { view.chipIcon = it },
-                onError = {
-                    println()
-                })
-            .build()
-        imageLoader.enqueue(imageRequest)
+        request {
+            data(url)
+            target(onSuccess = { view.chipIcon = it })
+            transformations(RoundedCornersTransformation(view.chipCornerRadius))
+        }
     }
 
     @BindingAdapter("date")
