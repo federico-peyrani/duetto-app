@@ -2,13 +2,13 @@ package me.federicopeyrani.duetto.data
 
 import android.util.Log
 import androidx.annotation.IntRange
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ class SpotifyRepository @Inject constructor(
     }
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+        get() = CoroutineName("SpotifyRepositoryScope") + Dispatchers.IO
 
     fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
@@ -67,13 +67,14 @@ class SpotifyRepository @Inject constructor(
      * its value first and the network will subsequently emit its value after it.
      */
     private fun getTrackMerging(trackId: String) = channelFlow {
+        Log.d("SpotifyRepository", "$trackId: loading from network and database")
         val loadFromDatabase = launch {
             send(trackDao.getTrack(trackId))
-            Log.d("SpotifyRepository", "Fetched track from database")
+            Log.d("SpotifyRepository", "$trackId: fetched from database")
         }
         launch {
             send(webService.getTrack(trackId).toTrack())
-            Log.d("SpotifyRepository", "Fetched track from network")
+            Log.d("SpotifyRepository", "$trackId: fetched from network")
             loadFromDatabase.cancel()
         }
     }
@@ -85,18 +86,19 @@ class SpotifyRepository @Inject constructor(
      * (3) any other [Track] emitted by the database or network, now enriched with the detail
      * about the [Artist] obtained at (2).
      */
-    fun getTrack(trackId: String): Flow<Track> = flow {
-        val trackMergeFlow = getTrackMerging(trackId)
-        val track = trackMergeFlow.first()
-        emit(track)
-
-        val artists = webService.getArtistsById(track.artist.map(Artist::id))
-            .map(ArtistObject::toArtist)
-            .toTypedArray()
-        emit(track.copy(artist = artists))
-
-        trackMergeFlow.collect { emit(it.copy(artist = artists)) }
-    }
+    fun getTrack(trackId: String) = channelFlow {
+        Log.d("SpotifyRepository", "Getting track $trackId")
+        var artists: Array<Artist>? = null
+        getTrackMerging(trackId).collectLatest {
+            if (artists == null) {
+                send(it)
+                artists = webService.getArtistsById(it.artist.map(Artist::id))
+                    .map(ArtistObject::toArtist)
+                    .toTypedArray()
+            }
+            send(it.copy(artist = artists!!))
+        }
+    }.flowOn(coroutineContext)
 
     suspend fun getTopTracks(
         timeRange: TimeRange,
