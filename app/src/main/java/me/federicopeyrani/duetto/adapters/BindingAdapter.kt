@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.data.Artist
@@ -56,6 +57,22 @@ class BindingAdapter @Inject constructor(
             .allowHardware(false)
             .data(url)
             .target(view)
+            .build()
+        imageLoader.enqueue(imageRequest)
+    }
+
+    @BindingAdapter("chipArtistImage")
+    fun loadChipArtistImage(view: Chip, images: Array<ImageObject>?) {
+        val url = images?.minByOrNull { it.width }?.url ?: return
+
+        val imageRequest = ImageRequest.Builder(context)
+            .allowHardware(false)
+            .data(url)
+            .target(
+                onSuccess = { view.chipIcon = it },
+                onError = {
+                    println()
+                })
             .build()
         imageLoader.enqueue(imageRequest)
     }

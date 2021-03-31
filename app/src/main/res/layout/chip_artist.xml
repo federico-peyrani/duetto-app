@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="artist"
+            type="me.federicopeyrani.duetto.data.Artist" />
+
+        <variable
+            name="swatch"
+            type="androidx.palette.graphics.Palette.Swatch" />
+
+    </data>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        chipArtistImage="@{artist.images}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{artist.name}"
+        android:textColor="@{swatch.bodyTextColor}"
+        app:chipBackgroundColor="@{swatch.rgb}"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Duetto.SmallComponent" />
+
+</layout>

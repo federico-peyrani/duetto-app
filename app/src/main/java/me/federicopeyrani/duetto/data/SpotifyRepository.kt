@@ -2,32 +2,42 @@ package me.federicopeyrani.duetto.data
 
 import android.util.Log
 import androidx.annotation.IntRange
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.federicopeyrani.spotify_web_api.objects.ArtistObject
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
 import me.federicopeyrani.spotify_web_api.objects.PlayHistoryObject
 import me.federicopeyrani.spotify_web_api.services.WebService
 import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtists
+import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtistsById
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 @Singleton
 class SpotifyRepository @Inject constructor(
     private val webService: WebService,
     private val trackDao: TrackDao,
     private val playHistoryDao: PlayHistoryDao
-) {
+) : CoroutineScope {
 
     companion object {
         private const val CURRENT_PLAYBACK_POLLING_INTERVAL_MS = 10000L
     }
 
-    private val context = Dispatchers.IO
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO
 
     fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
@@ -47,10 +57,45 @@ class SpotifyRepository @Inject constructor(
             // delay next polling by CURRENT_PLAYBACK_POLLING_INTERVAL_MS
             delay(CURRENT_PLAYBACK_POLLING_INTERVAL_MS)
         }
-    }.flowOn(context)
+    }.flowOn(coroutineContext)
 
+    /**
+     * Creates a flow that will simultaneously query the database and the network, having the
+     * network taking precedence over the database. This means that if the network emits a value
+     * before the database, the job associated with the database query will be cancelled and only
+     * the value from the network will be returned. It can also happen that the database will return
+     * its value first and the network will subsequently emit its value after it.
+     */
+    private fun getTrackMerging(trackId: String) = channelFlow {
+        val loadFromDatabase = launch {
+            send(trackDao.getTrack(trackId))
+            Log.d("SpotifyRepository", "Fetched track from database")
+        }
+        launch {
+            send(webService.getTrack(trackId).toTrack())
+            Log.d("SpotifyRepository", "Fetched track from network")
+            loadFromDatabase.cancel()
+        }
+    }
+
+    /**
+     * Returns a flow that will emit in order: (1) the first [Track] emitted from either the network
+     * or the database, with the network taking precedence over the database, (2) a [Track] object
+     * that will also include the fully detailed [Artist] object, obtained by querying the network,
+     * (3) any other [Track] emitted by the database or network, now enriched with the detail
+     * about the [Artist] obtained at (2).
+     */
     fun getTrack(trackId: String): Flow<Track> = flow {
-        emit(webService.getTrack(trackId).toTrack())
+        val trackMergeFlow = getTrackMerging(trackId)
+        val track = trackMergeFlow.first()
+        emit(track)
+
+        val artists = webService.getArtistsById(track.artist.map(Artist::id))
+            .map(ArtistObject::toArtist)
+            .toTypedArray()
+        emit(track.copy(artist = artists))
+
+        trackMergeFlow.collect { emit(it.copy(artist = artists)) }
     }
 
     suspend fun getTopTracks(
@@ -73,7 +118,7 @@ class SpotifyRepository @Inject constructor(
 
     fun getPlayHistoryPagingSource() = playHistoryDao.getPlayHistoryPagingSource()
 
-    suspend fun updatePlayHistory() {
+    suspend fun updatePlayHistory() = withContext(coroutineContext) {
         val playHistoryObjects = webService.getRecentlyPlayedTracks(50).items
         val playHistoryItems = playHistoryObjects.map(PlayHistoryObject::toPlayHistory)
 

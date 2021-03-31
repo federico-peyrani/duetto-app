@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import androidx.palette.graphics.Palette
+import androidx.palette.graphics.Target
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -28,7 +29,12 @@ class PaletteGenerator @Inject constructor(
         (result as BitmapDrawable).bitmap
     }
 
-    suspend inline fun generatePalette(bitmap: Bitmap): Palette = withContext(Dispatchers.Default) {
-        Palette.from(bitmap).generate()
+    suspend inline fun generatePalette(
+        bitmap: Bitmap,
+        vararg target: Target = emptyArray()
+    ): Palette = withContext(Dispatchers.Default) {
+        Palette.from(bitmap).apply {
+            target.forEach(::addTarget)
+        }.generate()
     }
 }

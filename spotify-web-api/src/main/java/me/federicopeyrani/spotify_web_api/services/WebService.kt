@@ -27,6 +27,10 @@ interface WebService {
         suspend fun WebService.getArtists(@Size(min = 1, max = 50) artists: List<ArtistObject>) =
             getArtists(artists.joinToString(",") { it.id })
 
+        @Suppress("RestrictedApi")
+        suspend fun WebService.getArtistsById(@Size(min = 1, max = 50) artists: List<String>) =
+            getArtists(artists.joinToString(","))
+
         // endregion
     }
 

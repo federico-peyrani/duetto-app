@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@{viewModel.palette.rgb}">
+        android:background="@{viewModel.mainContentSwatch.rgb}">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/album_art"
@@ -34,7 +34,7 @@
             android:maxLines="2"
             android:text="@{viewModel.track.title}"
             android:textAppearance="?attr/textAppearanceHeadline4"
-            android:textColor="@{viewModel.palette.titleTextColor}"
+            android:textColor="@{viewModel.mainContentSwatch.titleTextColor}"
             app:layout_constraintEnd_toStartOf="@+id/track_duration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/album_art" />
@@ -48,7 +48,7 @@
             android:maxLines="1"
             android:text="@{viewModel.track.album}"
             android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="@{viewModel.palette.titleTextColor}"
+            android:textColor="@{viewModel.mainContentSwatch.titleTextColor}"
             app:layout_constraintEnd_toStartOf="@+id/track_duration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_title" />
@@ -60,13 +60,14 @@
             android:layout_marginEnd="16dp"
             android:text="@{viewModel.track.duration}"
             android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="@{viewModel.palette.titleTextColor}"
+            android:textColor="@{viewModel.mainContentSwatch.titleTextColor}"
             app:layout_constraintBottom_toBottomOf="@id/track_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/album_art"
             app:layout_constraintTop_toTopOf="@id/track_title" />
 
         <com.google.android.material.chip.ChipGroup
+            android:id="@+id/track_artists"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -75,8 +76,9 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/track_album"
-            app:singleLine="true" />
+            app:layout_constraintTop_toBottomOf="@id/track_album">
+
+        </com.google.android.material.chip.ChipGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
