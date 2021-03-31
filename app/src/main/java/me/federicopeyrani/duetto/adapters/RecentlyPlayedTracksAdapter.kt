@@ -14,7 +14,7 @@ class RecentlyPlayedTracksAdapter : PagingDataAdapter<PlayHistory, TrackViewHold
     private object ItemCallback : DiffUtil.ItemCallback<PlayHistory>() {
 
         override fun areItemsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
-            oldItem == newItem
+            oldItem.playedAt == newItem.playedAt
 
         override fun areContentsTheSame(oldItem: PlayHistory, newItem: PlayHistory) =
             oldItem == newItem

@@ -22,11 +22,19 @@ data class Artist(
         other as Artist
 
         if (id != other.id) return false
+        if (name != other.name) return false
+        if (images != null) {
+            if (other.images == null) return false
+            if (!images.contentEquals(other.images)) return false
+        } else if (other.images != null) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + (images?.contentHashCode() ?: 0)
+        return result
     }
 }

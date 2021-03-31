@@ -35,11 +35,22 @@ data class Track(
         other as Track
 
         if (id != other.id) return false
+        if (title != other.title) return false
+        if (!artist.contentEquals(other.artist)) return false
+        if (album != other.album) return false
+        if (duration != other.duration) return false
+        if (!albumArtUrls.contentEquals(other.albumArtUrls)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        var result = id.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + artist.contentHashCode()
+        result = 31 * result + album.hashCode()
+        result = 31 * result + duration.hashCode()
+        result = 31 * result + albumArtUrls.contentHashCode()
+        return result
     }
 }
