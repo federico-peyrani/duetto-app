@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.federicopeyrani.duetto.R
 import me.federicopeyrani.duetto.adapters.ArtistAdapter
 import me.federicopeyrani.duetto.adapters.TrackAdapter
@@ -41,19 +39,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private suspend fun setTopGenres() {
-        val genres = withContext(Dispatchers.IO) { viewModel.getTopGenres() }
+        val genres = viewModel.getTopGenres()
         binding.topGenresCard.graph.bars = genres.map {
             StackedBarsGraphView.Bar(it.key, it.value.toFloat())
         }
     }
 
     private suspend fun setTopTracks(adapter: TrackAdapter) {
-        val tracks = withContext(Dispatchers.IO) { viewModel.getTopTracks() }
+        val tracks = viewModel.getTopTracks()
         adapter += tracks
     }
 
     private suspend fun setTopArtists(adapter: ArtistAdapter) {
-        val artists = withContext(Dispatchers.IO) { viewModel.getTopArtists() }
+        val artists = viewModel.getTopArtists()
         adapter += artists
     }
 

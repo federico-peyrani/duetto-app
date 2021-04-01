@@ -2,6 +2,7 @@ package me.federicopeyrani.duetto.data
 
 import android.util.Log
 import androidx.annotation.IntRange
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +12,9 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import me.federicopeyrani.spotify_web_api.objects.ArtistObject
 import me.federicopeyrani.spotify_web_api.objects.CurrentPlaybackObject
@@ -20,7 +23,6 @@ import me.federicopeyrani.spotify_web_api.services.WebService
 import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtists
 import me.federicopeyrani.spotify_web_api.services.WebService.Companion.getArtistsById
 import me.federicopeyrani.spotify_web_api.services.WebService.TimeRange
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
@@ -39,6 +41,10 @@ class SpotifyRepository @Inject constructor(
     override val coroutineContext: CoroutineContext
         get() = CoroutineName("SpotifyRepositoryScope") + Dispatchers.IO
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e("SpotifyRepository", "Caught $throwable")
+    }
+
     fun getCurrentPlayback(): Flow<CurrentPlaybackObject?> = flow {
         while (true) {
             try {
@@ -49,9 +55,6 @@ class SpotifyRepository @Inject constructor(
                 // the body of the response is empty
                 Log.d("SpotifyRepository", "No item playing")
                 emit(null)
-            } catch (e: HttpException) {
-                // generic HttpExceptions, such as an invalid login
-                Log.d("SpotifyRepository", "getCurrentPlayback() failed, retrying.")
             }
 
             // delay next polling by CURRENT_PLAYBACK_POLLING_INTERVAL_MS
@@ -68,14 +71,25 @@ class SpotifyRepository @Inject constructor(
      */
     private fun getTrackMerging(trackId: String) = channelFlow {
         Log.d("SpotifyRepository", "$trackId: loading from network and database")
-        val loadFromDatabase = launch {
-            send(trackDao.getTrack(trackId))
-            Log.d("SpotifyRepository", "$trackId: fetched from database")
-        }
-        launch {
-            send(webService.getTrack(trackId).toTrack())
-            Log.d("SpotifyRepository", "$trackId: fetched from network")
-            loadFromDatabase.cancel()
+
+        supervisorScope {
+            val loadFromDatabase = launch(coroutineExceptionHandler) {
+                val track = trackDao.getTrack(trackId) ?: return@launch
+                send(track)
+                Log.d("SpotifyRepository", "$trackId: fetched from database")
+            }
+            val loadFromNetwork = launch {
+                val track = webService.getTrack(trackId).toTrack()
+                send(track)
+                Log.d("SpotifyRepository", "$trackId: fetched from network")
+                loadFromDatabase.cancel()
+                trackDao.insert(track)
+            }
+
+            joinAll(loadFromDatabase, loadFromNetwork)
+            if (loadFromDatabase.isCancelled && loadFromNetwork.isCancelled) {
+                throw Exception()
+            }
         }
     }
 
@@ -100,19 +114,22 @@ class SpotifyRepository @Inject constructor(
         }
     }.flowOn(coroutineContext)
 
+    suspend fun getAudioFeatures(trackId: String) =
+        withContext(coroutineContext) { webService.getAudioFeatures(trackId) }
+
     suspend fun getTopTracks(
         timeRange: TimeRange,
         @IntRange(from = 1, to = 50) limit: Int = 20
-    ) = webService.getTopTracks(timeRange, limit).items
+    ) = withContext(coroutineContext) { webService.getTopTracks(timeRange, limit).items }
 
     suspend fun getTopArtists(
         timeRange: TimeRange,
         @IntRange(from = 1, to = 50) limit: Int = 20
-    ) = webService.getTopArtists(timeRange, limit).items
+    ) = withContext(coroutineContext) { webService.getTopArtists(timeRange, limit).items }
 
-    suspend fun getTopGenres(timeRange: TimeRange): Map<String, Int> {
+    suspend fun getTopGenres(timeRange: TimeRange) = withContext(coroutineContext) {
         val topArtistsByTracks = getTopTracks(timeRange).flatMap { it.artists }
-        return webService.getArtists(topArtistsByTracks)
+        webService.getArtists(topArtistsByTracks)
             .flatMap { it.genres?.toList() ?: emptyList() }
             .groupingBy { it }
             .eachCount()

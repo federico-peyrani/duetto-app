@@ -1,10 +1,12 @@
 package me.federicopeyrani.duetto.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -38,16 +40,17 @@ class HomeViewModel @Inject constructor(
 
     val currentPlayback: StateFlow<Track?> = spotifyRepository.getCurrentPlayback()
         .map { it?.item?.toTrack() }
+        .catch { cause -> Log.e("HomeViewModel", "$cause") }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     val currentPlaybackBitmap = currentPlayback
         .mapNotNull { track -> track?.albumArtUrls?.maxByOrNull { it.width }?.url }
-        .map { paletteGenerator.loadBitmap(it) }
+        .map(paletteGenerator::loadBitmap)
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     val currentPlaybackSwatch = currentPlaybackBitmap
         .filterNotNull()
-        .map { paletteGenerator.generatePalette(it).vibrantSwatch }
+        .map { paletteGenerator.generatePalette(it).dominantSwatch }
         .stateIn(viewModelScope, SHARING_STARTED, null)
 
     suspend fun getTopGenres() = spotifyRepository.getTopGenres(TimeRange.MEDIUM_TERM)
