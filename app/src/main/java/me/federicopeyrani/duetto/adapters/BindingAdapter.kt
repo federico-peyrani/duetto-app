@@ -30,55 +30,54 @@ class BindingAdapter @Inject constructor(
     }
 
     @BindingAdapter("albumArtUrls")
-    fun loadImage(view: ImageView, albumArtUrls: Array<ImageObject>?) {
+    fun ImageView.loadImage(albumArtUrls: Array<ImageObject>?) {
         // Choose the smallest image that is at least bigger or equal than the size of the
         // ImageView, sorting them by increasing size (even though they are already sorted by
         // decreasing height, sorting them makes the code more readable).
-        val height = view.height
         val url = albumArtUrls?.sortedBy { it.height }?.first { it.height >= height }?.url ?: return
 
         request {
             data(url)
-            target(view)
+            target(this@loadImage)
         }
     }
 
     @BindingAdapter("artists")
-    fun displayArtists(view: TextView, artists: Array<Artist>?) {
-        view.text = artists?.joinToString(", ") { it.name }
+    fun TextView.displayArtists(artists: Array<Artist>?) {
+        text = artists?.joinToString(", ") { it.name }
     }
 
     @BindingAdapter("artistImages")
-    fun loadArtistsImage(view: ImageView, images: Array<ImageObject>?) {
-        val width = view.width
+    fun ImageView.loadArtistsImage(images: Array<ImageObject>?) {
+        val width = width
         val url = images?.sortedBy { it.width }?.first { it.width >= width }?.url ?: return
 
-        val layoutParams = view.layoutParams
-        layoutParams.height = view.width
-        view.layoutParams = layoutParams
+        val layoutParams = layoutParams
+        layoutParams.height = this.width
+        this.layoutParams = layoutParams
 
         request {
             data(url)
-            target(view)
+            target(this@loadArtistsImage)
         }
     }
 
     @BindingAdapter("chipArtistImage")
-    fun loadChipArtistImage(view: Chip, images: Array<ImageObject>?) {
+    fun Chip.loadChipArtistImage(images: Array<ImageObject>?) {
         val url = images?.minByOrNull { it.width }?.url ?: return
         request {
             data(url)
-            target(onSuccess = { view.chipIcon = it })
-            transformations(RoundedCornersTransformation(view.chipCornerRadius))
+            target(onSuccess = { chipIcon = it })
+            transformations(RoundedCornersTransformation(chipCornerRadius))
         }
     }
 
     @BindingAdapter("date")
-    fun displayDate(view: TextView, date: Date?) {
+    fun TextView.displayDate(date: Date?) {
         date?.let {
             val dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(it)
             val timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(it)
-            view.text = context.getString(
+            text = this@BindingAdapter.context.getString(
                 R.string.play_history_date_time_format,
                 dateString,
                 timeString
@@ -87,10 +86,10 @@ class BindingAdapter @Inject constructor(
     }
 
     @BindingAdapter("albumArtBitmap")
-    fun loadAlbumArtFromBitmap(view: ImageView, bitmap: Bitmap?) {
-        val layoutParams = view.layoutParams
-        layoutParams.height = view.width
-        view.layoutParams = layoutParams
-        view.setImageBitmap(bitmap)
+    fun ImageView.loadAlbumArtFromBitmap(bitmap: Bitmap?) {
+        val mLayoutParams = layoutParams
+        mLayoutParams.height = width
+        layoutParams = mLayoutParams
+        setImageBitmap(bitmap)
     }
 }
