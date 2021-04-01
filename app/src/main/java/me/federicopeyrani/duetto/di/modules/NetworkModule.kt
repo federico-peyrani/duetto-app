@@ -2,6 +2,7 @@ package me.federicopeyrani.duetto.di.modules
 
 import android.content.Context
 import coil.ImageLoader
+import coil.util.CoilUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,9 +40,14 @@ object NetworkModule {
     fun provideImageLoader(
         @ApplicationContext context: Context,
         baseOkHttpClient: OkHttpClient
-    ) = ImageLoader.Builder(context)
-        .okHttpClient(baseOkHttpClient)
-        .build()
+    ): ImageLoader {
+        val okHttpClient = baseOkHttpClient.newBuilder()
+            .cache(CoilUtils.createDefaultCache(context))
+            .build()
+        return ImageLoader.Builder(context)
+            .okHttpClient(okHttpClient)
+            .build()
+    }
 
     @Provides
     @Singleton
